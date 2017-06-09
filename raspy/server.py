@@ -20,18 +20,23 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     """
     def handle(self):
         # self.request is the TCP socket connected to the client
-        # receives the length
-        length = self._readLength()
-        # receives an image
-        self._readAll(length)
 
-        # saves the image
-        f = open('out.%s.jpg' % self.client_address[0], 'w')
-        f.write(self.data)
-        f.close()
+        # receives the number of images to receive
+        numberOfImages = self._readLength()
 
-        # just send ok
-        self.request.sendall('ok')
+        for x in xrange(0,numberOfImages):
+            # receives the length of an image
+            length = self._readLength()
+            # receives the image
+            self._readAll(length)
+    
+            # saves the image
+            f = open('out.%s.jpg' % self.client_address[0], 'w')
+            f.write(self.data)
+            f.close()
+    
+            # just send ok
+            self.request.sendall('ok')
 
     def _readLength(self):
         rv = 0
