@@ -9,4 +9,4 @@ then
   sudo docker rm raspy
 fi
 
-sudo docker run -it -p 9000:10000 --name raspy -v "$PWD":/raspy raspy ./init.sh
+sudo docker run -it -p 9000:10000 --name raspy -v "$PWD/raspy":/raspy raspy ./init.sh

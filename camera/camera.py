@@ -2,7 +2,7 @@ import socket
 import sys
 
 def _read_ip_from_temp():
-    f = open('ip.temp', 'r')
+    f = open('../raspy/ip.temp', 'r')
     ip = f.readline()
     port = int(f.readline())
     f.close()

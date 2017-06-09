@@ -55,7 +55,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = _get_ip_address('eth0'), 9998
-    f = open('./raspy/ip.temp', 'w')
+    f = open('./ip.temp', 'w')
     f.write('%s%c%d' % (HOST, '\n', PORT))
     f.close()
 
