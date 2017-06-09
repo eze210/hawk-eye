@@ -20,15 +20,36 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     """
     def handle(self):
         # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        print "{} wrote:".format(self.client_address[0])
-        print self.data
-        # just send back the same data, but upper-cased
-        self.request.sendall(self.data.upper())
+        # receives the length
+        length = self._readLength()
+        # receives an image
+        self._readAll(length)
+
+        # saves the image
+        f = open('out.%s.jpg' % self.client_address[0], 'w')
+        f.write(self.data)
+        f.close()
+
+        # just send ok
+        self.request.sendall('ok')
+
+    def _readLength(self):
+        rv = 0
+        while True:
+            readed = self.request.recv(1)
+            if readed == '\n':
+                return rv
+            else:
+                rv = rv * 10 + int(readed)
+
+    def _readAll(self, length):
+        self.data = self.request.recv(length)
+        while len(self.data) < length:
+            self.data += self.request.recv(length - len(self.data))
 
 
 if __name__ == "__main__":
-    HOST, PORT = _get_ip_address('eth0'), 9999
+    HOST, PORT = _get_ip_address('eth0'), 9998
     f = open('./raspy/ip.temp', 'w')
     f.write('%s%c%d' % (HOST, '\n', PORT))
     f.close()
