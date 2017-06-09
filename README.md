@@ -14,3 +14,5 @@ Distributed system to track objects or faces from images.
   ```bash
     > ./docker-start.sh
   ```
+
+This will start the server.py script in background, and will let open a terminal.
