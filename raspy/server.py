@@ -29,6 +29,9 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = _get_ip_address('eth0'), 9999
+    f = open('./raspy/ip.temp', 'w')
+    f.write('%s%c%d' % (HOST, '\n', PORT))
+    f.close()
 
     # Create the server, binding to localhost on port 9999
     server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)

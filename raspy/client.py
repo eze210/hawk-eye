@@ -1,7 +1,15 @@
 import socket
 import sys
 
-HOST, PORT = "172.17.0.51", 9999
+def _read_ip_from_temp():
+    f = open('ip.temp', 'r')
+    ip = f.readline()
+    port = int(f.readline())
+    f.close()
+    return ip, port
+
+
+HOST, PORT = _read_ip_from_temp()
 data = " ".join(sys.argv[1:])
 
 # Create a socket (SOCK_STREAM means a TCP socket)
