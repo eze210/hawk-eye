@@ -31,7 +31,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
             self._readAll(length)
     
             # saves the image
-            f = open('out.%s.jpg' % self.client_address[0], 'w')
+            f = open('out_%d.%s.jpg' % (x, self.client_address[0]), 'w')
             f.write(self.data)
             f.close()
     
