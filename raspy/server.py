@@ -1,5 +1,7 @@
 import SocketServer
 import socket, fcntl, struct
+from FaceDetector import FaceDetector
+from CV2Wrapper import CV2Wrapper
 
 def _get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -18,22 +20,35 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
     override the handle() method to implement communication to the
     client.
     """
+
+    def __init__(self, *args, **kwargs):
+        SocketServer.BaseRequestHandler.__init__(self, *args, **kwargs)
+
+
     def handle(self):
         # self.request is the TCP socket connected to the client
 
+        faceDetector = FaceDetector()
+        openCV = CV2Wrapper()
+        
         # receives the number of images to receive
         numberOfImages = self._readLength()
 
         for x in xrange(0,numberOfImages):
             # receives the length of an image
             length = self._readLength()
+            
             # receives the image
             self._readAll(length)
-    
-            # saves the image
-            f = open('out_%d.%s.jpg' % (x, self.client_address[0]), 'w')
-            f.write(self.data)
-            f.close()
+
+            facesAsStr = [openCV.imageToBinary(face) for face in faceDetector.detectFromBinary(self.data)]
+
+            # saves the images
+            face_idx = 0
+            for face in facesAsStr:
+                face_idx += 1
+                with open('output/%d_%d.%s.jpg' % (x, face_idx, self.client_address[0]), 'wb') as f:
+                    f.write(face)
     
             # just send ok
             self.request.sendall('ok')
@@ -54,7 +69,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 
 if __name__ == "__main__":
-    HOST, PORT = _get_ip_address('eth0'), 9998
+    HOST, PORT = _get_ip_address('eth0'), 9999
     f = open('./ip.temp', 'w')
     f.write('%s%c%d' % (HOST, '\n', PORT))
     f.close()

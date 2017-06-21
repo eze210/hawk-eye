@@ -1,3 +1,5 @@
+#usage: python camera.py img0.jpg img1.jpg img2.jpg ... imgN.jpg
+
 import socket
 import sys
 
@@ -17,17 +19,17 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
     # Connect to server and send data
-    sock.connect((HOST, PORT))
+    print 'Trying to connect to %s:%d' % (HOST, PORT)
+    sock.connect(('localhost', PORT))
 
     # Sends the number of images as string
     sock.sendall('%d\n' % len(IM_NAMES))
 
     for imageName in IM_NAMES:
         # Reads all the image
-        f = open(imageName, 'r')
-        # When read() does not receive a length, it reads the whole file
-        data = f.read()
-        f.close()
+        with open(imageName, 'rb') as f:
+            # When read() does not receive a length, it reads the whole file
+            data = f.read()
     
         # Sends the length as string
         sock.sendall('%d\n' % len(data))
