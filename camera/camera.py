@@ -20,7 +20,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
     # Connect to server and send data
     print 'Trying to connect to %s:%d' % (HOST, PORT)
-    sock.connect(('localhost', PORT))
+    sock.connect((HOST, PORT))
 
     # Sends the number of images as string
     sock.sendall('%d\n' % len(IM_NAMES))

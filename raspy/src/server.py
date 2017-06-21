@@ -1,7 +1,8 @@
 import SocketServer
 import socket, fcntl, struct
-from FaceDetector import FaceDetector
-from CV2Wrapper import CV2Wrapper
+from ComputerVision.FaceDetector import FaceDetector
+from ComputerVision.CV2Wrapper import CV2Wrapper
+
 
 def _get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -12,7 +13,7 @@ def _get_ip_address(ifname):
     )[20:24])
 
 
-class MyTCPHandler(SocketServer.BaseRequestHandler):
+class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
     """
     The request handler class for our server.
 
@@ -70,12 +71,12 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = _get_ip_address('eth0'), 9999
-    f = open('./ip.temp', 'w')
-    f.write('%s%c%d' % (HOST, '\n', PORT))
-    f.close()
+
+    with open('./ip.temp', 'w') as f:
+        f.write('%s%c%d' % (HOST, '\n', PORT))
 
     # Create the server, binding to localhost on port 9999
-    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
+    server = SocketServer.TCPServer((HOST, PORT), FaceCropTCPHandler)
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
