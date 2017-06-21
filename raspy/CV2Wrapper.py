@@ -6,7 +6,7 @@ class CV2Wrapper(object):
 	"""OpenCV 2 Wrapper"""
 
 	def __init__(self):
-		self.faceCascade = cv2.CascadeClassifier('poc/static/haarcascade_frontalface_default.xml')
+		self.faceCascade = cv2.CascadeClassifier('static/haarcascade_frontalface_default.xml')
 
 
 	def imageRead(self, path):

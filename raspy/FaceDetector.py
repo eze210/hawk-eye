@@ -21,14 +21,3 @@ class FaceDetector(object):
 	def detectFromBinary(self, imageBin):
 		image = self.cv.imageFromBinary(imageBin)
 		return self.detectFromImage(image)
-
-
-if __name__ == '__main__':
-	fd = FaceDetector()
-	faces = fd.detectFromPath('poc/messi5.jpg')
-
-	idx = 0
-	for sub_face in faces:
-		idx += 1
-		faceFileName = "poc/face_" + str(idx) + ".jpg"
-		imwrite(faceFileName, sub_face)
