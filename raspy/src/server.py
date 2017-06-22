@@ -38,7 +38,7 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
         for x in xrange(0,numberOfImages):
             # receives the length of an image
             length = self._readLength()
-            
+
             # receives the image
             self._readAll(length)
 
@@ -50,7 +50,7 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
                 face_idx += 1
                 with open('output/%d_%d.%s.jpg' % (x, face_idx, self.client_address[0]), 'wb') as f:
                     f.write(face)
-    
+
             # just send ok
             self.request.sendall('ok')
 
@@ -69,6 +69,10 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
             self.data += self.request.recv(length - len(self.data))
 
 
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    pass
+
+
 if __name__ == "__main__":
     HOST, PORT = _get_ip_address('eth0'), 9999
 
@@ -76,7 +80,7 @@ if __name__ == "__main__":
         f.write('%s%c%d' % (HOST, '\n', PORT))
 
     # Create the server, binding to localhost on port 9999
-    server = SocketServer.TCPServer((HOST, PORT), FaceCropTCPHandler)
+    server = ThreadedTCPServer((HOST, PORT), FaceCropTCPHandler)
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
