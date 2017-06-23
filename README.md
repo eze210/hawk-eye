@@ -9,9 +9,9 @@ Distributed system to track objects or faces from images.
 
   ```bash
     > wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.2.0.zip
-	> unzip opencv.zip
-	> wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/3.2.0.zip
-	> unzip opencv_contrib.zip
+    > unzip opencv.zip
+    > wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/3.2.0.zip
+    > unzip opencv_contrib.zip
   ```
 
 
@@ -28,4 +28,4 @@ Distributed system to track objects or faces from images.
     > ./docker-start.sh
   ```
 
-This will start the server.py script in background, and will let open a terminal.
+This will start the cmb.py script in background, and will let open a terminal.

@@ -1,16 +1,6 @@
 import SocketServer
-import socket, fcntl, struct
 from ComputerVision.FaceDetector import FaceDetector
 from ComputerVision.CV2Wrapper import CV2Wrapper
-
-
-def _get_ip_address(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
 
 
 class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
@@ -45,14 +35,15 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
             facesAsStr = [openCV.imageToBinary(face) for face in faceDetector.detectFromBinary(self.data)]
 
             # saves the images
-            face_idx = 0
+            faceIdx = 0
             for face in facesAsStr:
-                face_idx += 1
-                with open('output/%d_%d.%s.jpg' % (x, face_idx, self.client_address[0]), 'wb') as f:
+                faceIdx += 1
+                with open('output/%d_%d.%s.jpg' % (x, faceIdx, self.client_address[0]), 'wb') as f:
                     f.write(face)
 
             # just send ok
             self.request.sendall('ok')
+
 
     def _readLength(self):
         rv = 0
@@ -63,25 +54,8 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
             else:
                 rv = rv * 10 + int(readed)
 
+
     def _readAll(self, length):
         self.data = self.request.recv(length)
         while len(self.data) < length:
             self.data += self.request.recv(length - len(self.data))
-
-
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    pass
-
-
-if __name__ == "__main__":
-    HOST, PORT = _get_ip_address('eth0'), 9999
-
-    with open('./ip.temp', 'w') as f:
-        f.write('%s%c%d' % (HOST, '\n', PORT))
-
-    # Create the server, binding to localhost on port 9999
-    server = ThreadedTCPServer((HOST, PORT), FaceCropTCPHandler)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
