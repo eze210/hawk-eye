@@ -22,6 +22,14 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
         faceDetector = FaceDetector()
         openCV = CV2Wrapper()
         
+        # receives the cordinates from the camera
+        cordinates = self._readCordinates()
+        print cordinates
+
+        # receives the timestamp
+        timestamp = self._readTimestamp()
+        print timestamp
+
         # receives the number of images to receive
         numberOfImages = self._readLength()
 
@@ -43,6 +51,24 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
 
             # just send ok
             self.request.sendall('ok')
+
+
+    def _readCordinates(self):
+        return self._readLine()
+
+
+    def _readTimestamp(self):
+        return self._readLine()
+
+
+    def _readLine(self):
+        rv = ''
+        while True:
+            readed = self.request.recv(1)
+            if readed == '\n':
+                return rv
+            else:
+                rv = rv + readed
 
 
     def _readLength(self):
