@@ -40,3 +40,7 @@ class CV2Wrapper(object):
 
 	def imageToBinary(self, image):
 		return cv2.imencode('.jpg', image)[1].tostring()
+
+
+	def imagesCompare(image1, image2):
+		return True

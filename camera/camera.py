@@ -51,8 +51,9 @@ try:
         # Sends the data
         sock.sendall(data)
     
-        # Receive ok from the server and shut down
-        received = sock.recv(1024)
-        print received
+    # Receive ok from the server and shut down
+    received = sock.recv(1024)
+    print received
+
 finally:
     sock.close()

@@ -1,9 +1,9 @@
 import SocketServer
-from ComputerVision.FaceDetector import FaceDetector
+from ComputerVision.FaceComparator import FaceComparator
 from ComputerVision.CV2Wrapper import CV2Wrapper
 
 
-class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
+class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
     """
     The request handler class for our server.
 
@@ -19,43 +19,33 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
 
-        faceDetector = FaceDetector()
+        faceComparator = FaceComparator()
         openCV = CV2Wrapper()
         
         try:
             while True:
-                # receives the cordinates from the camera
+                # receives the cordinates from the CMB
                 cordinates = self._readCordinates()
-        
+
                 # receives the timestamp
                 timestamp = self._readTimestamp()
-        
+
                 # receives the number of images to receive
                 numberOfImages = self._readLength()
-        
-                facesAsStr = []
-                for x in xrange(0,numberOfImages):
+
+                for x in xrange(0, numberOfImages):
                     # receives the length of an image
                     length = self._readLength()
-        
+
                     # receives the image
                     self._readAll(length)
-        
-                    facesAsStr = facesAsStr + [openCV.imageToBinary(face) for face in faceDetector.detectFromBinary(self.data)]
-        
-                self.server.socketToCity.sendall("%s\n" % cordinates)
-                self.server.socketToCity.sendall("%s\n" % timestamp)
-                self.server.socketToCity.sendall("%d\n" % len(facesAsStr))
-    
-                # sends the images
-                for face in facesAsStr:
-                    self.server.socketToCity.sendall("%d\n" % len(face))                
-                    self.server.socketToCity.sendall(face)
 
-                self.request.sendall('ok')
+                    # saves the images
+                    with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
+                        f.write(self.data)
 
         except Exception as e:
-            print "Connection with some camera was lost"
+            print "Connection with some neighborhood was lost"
 
 
     def _readCordinates(self):

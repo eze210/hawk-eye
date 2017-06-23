@@ -1,6 +1,5 @@
 import CV2Wrapper
 
-from cv2 import imwrite
 
 class FaceDetector(object):
 	"""FaceDetector"""
