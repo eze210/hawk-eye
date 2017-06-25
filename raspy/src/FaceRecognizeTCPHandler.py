@@ -1,3 +1,4 @@
+import os
 import SocketServer
 from ComputerVision.FaceComparator import FaceComparator
 from ComputerVision.CV2Wrapper import CV2Wrapper
@@ -22,7 +23,8 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
         faceComparator = FaceComparator()
         openCV = CV2Wrapper()
         
-        try:
+#        try:
+        if True:
             while True:
                 # receives the cordinates from the CMB
                 cordinates = self._readCordinates()
@@ -44,8 +46,20 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                     with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
                         f.write(self.data)
 
-        except Exception as e:
-            print "Connection with some neighborhood was lost"
+                    print "Image %d was saved" % x
+
+                    for root, dirs, files in os.walk("./templates"):
+                        for fileName in files:
+                            templateImage = openCV.imageRead("%s/%s" % (root, fileName))
+                            receivedImage = openCV.imageFromBinary(self.data)
+                            if faceComparator.facesCompare(templateImage, receivedImage):
+                                print "MATCH"
+                            else:
+                                print "NO MATCH"
+
+#        except Exception as e:
+#            print "Connection with some neighborhood was lost: ", e
+#            raise e
 
 
     def _readCordinates(self):

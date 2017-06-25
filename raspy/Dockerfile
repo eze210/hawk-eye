@@ -31,7 +31,32 @@ ADD opencv_contrib-3.2.0 opencv_contrib
 
 # Compile OpenCV
 RUN cd opencv && mkdir build
-RUN cd opencv/build && cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_EIGEN=ON -D BUILD_DOCS=ON -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_EXAMPLES=OFF -D WITH_OPENCL=OFF -D WITH_CUDA=OFF -D BUILD_opencv_gpu=OFF -D BUILD_opencv_gpuarithm=OFF -D BUILD_opencv_gpubgsegm=OFF -D BUILD_opencv_gpucodec=OFF -D BUILD_opencv_gpufeatures2d=OFF -D BUILD_opencv_gpufilters=OFF -D BUILD_opencv_gpuimgproc=OFF -D BUILD_opencv_gpulegacy=OFF -D BUILD_opencv_gpuoptflow=OFF -D BUILD_opencv_gpustereo=OFF -D BUILD_opencv_gpuwarping=OFF .. && make
+RUN cd opencv/build && cmake -D CMAKE_BUILD_TYPE=RELEASE \
+                             -D CMAKE_INSTALL_PREFIX=/usr/local \
+                             -D WITH_TBB=ON \
+                             -D WITH_EIGEN=ON \
+                             -D BUILD_DOCS=ON \
+                             -D BUILD_TESTS=OFF \
+                             -D BUILD_PERF_TESTS=OFF \
+                             -D BUILD_EXAMPLES=OFF \
+                             -D WITH_OPENCL=OFF \
+                             -D WITH_CUDA=OFF \
+                             -D BUILD_opencv_gpu=OFF \
+                             -D BUILD_opencv_gpuarithm=OFF \
+                             -D BUILD_opencv_gpubgsegm=OFF \
+                             -D BUILD_opencv_gpucodec=OFF \
+                             -D BUILD_opencv_gpufeatures2d=OFF \
+                             -D BUILD_opencv_gpufilters=OFF \
+                             -D BUILD_opencv_gpuimgproc=OFF \
+                             -D BUILD_opencv_gpulegacy=OFF \
+                             -D BUILD_opencv_gpuoptflow=OFF \
+                             -D BUILD_opencv_gpustereo=OFF \
+                             -D BUILD_opencv_gpuwarping=OFF \
+						     -D INSTALL_PYTHON_EXAMPLES=ON \
+						     -D INSTALL_C_EXAMPLES=OFF \
+                             -D OPENCV_EXTRA_MODULES_PATH=/raspy/opencv_contrib/modules \
+                             -D PYTHON_EXECUTABLE=/usr/bin/python \
+                             .. && make
 
 # Install OpenCV
 RUN cd opencv/build && make install

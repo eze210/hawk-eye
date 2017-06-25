@@ -22,7 +22,8 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
         faceDetector = FaceDetector()
         openCV = CV2Wrapper()
         
-        try:
+#        try:
+        if True:
             while True:
                 # receives the cordinates from the camera
                 cordinates = self._readCordinates()
@@ -34,7 +35,7 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
                 numberOfImages = self._readLength()
         
                 facesAsStr = []
-                for x in xrange(0,numberOfImages):
+                for x in xrange(0, numberOfImages):
                     # receives the length of an image
                     length = self._readLength()
         
@@ -42,6 +43,7 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
                     self._readAll(length)
         
                     facesAsStr = facesAsStr + [openCV.imageToBinary(face) for face in faceDetector.detectFromBinary(self.data)]
+                    print "Detected %d faces" % len(facesAsStr)
         
                 self.server.socketToCity.sendall("%s\n" % cordinates)
                 self.server.socketToCity.sendall("%s\n" % timestamp)
@@ -54,8 +56,8 @@ class FaceCropTCPHandler(SocketServer.BaseRequestHandler):
 
                 self.request.sendall('ok')
 
-        except Exception as e:
-            print "Connection with some camera was lost"
+#        except Exception as e:
+#            print "Connection with some camera was lost"
 
 
     def _readCordinates(self):
