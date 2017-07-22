@@ -9,7 +9,7 @@ class CV2Wrapper(object):
 				 maxWidth = 640.0, 
 				 maxHeight = 640.0,
 				 distanceFactor = 0.8,
-				 minGoods = 10,
+				 minGoodsPercentaje = 0.2,
 				 minSize = (30,30),
 				 scaleFactor = 1.00655,
 				 minNeighbors = 10,
@@ -17,7 +17,7 @@ class CV2Wrapper(object):
 		self.maxWidth = maxWidth
 		self.maxHeight = maxHeight
 		self.distanceFactor = distanceFactor
-		self.minGoods = minGoods
+		self.minGoodsPercentaje = minGoodsPercentaje
 		self.minSize = minSize
 		self.scaleFactor = scaleFactor
 		self.minNeighbors = minNeighbors
@@ -39,7 +39,8 @@ class CV2Wrapper(object):
 			#'static/haarcascade_frontalface_alt2.xml',
 			#'static/haarcascade_frontalface_alt_tree.xml',
 
-			'static/haarcascade_frontalface_default.xml']
+			'static/haarcascade_frontalface_default.xml'
+		]
 
 		# Loads trained XML data
 		self.faceCascades = [cv2.CascadeClassifier(x) for x in cascades]
@@ -82,6 +83,7 @@ class CV2Wrapper(object):
 				minNeighbors=self.minNeighbors,
 				flags=cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT | cv2.CASCADE_DO_ROUGH_SEARCH,
 				minSize=self.minSize)
+			
 			x.extend(detected)
 		return x
 
@@ -95,10 +97,10 @@ class CV2Wrapper(object):
 		rects = self.detectFacesLimits(imageGray)
 		#rects[:,2:] += rects[:,:2]
 		for (x,y,w,h) in rects:
-			up = int((1.0*y)/scaleFactor)
-			down = int((1.0*(y+h))/scaleFactor)
-			left = int((1.0*x)/scaleFactor)
-			right = int((1.0*(x+w))/scaleFactor)
+			up = int((1.0 * y) / scaleFactor)
+			down = int((1.0 * (y + h)) / scaleFactor)
+			left = int((1.0 * x) / scaleFactor)
+			right = int((1.0 * (x + w)) / scaleFactor)
 
 			face = imageColor[up:down, left:right]
 			face, __dummy = self._scaleToDefaultSize(face)			
@@ -113,27 +115,31 @@ class CV2Wrapper(object):
 
 	def imagesCompareSIFT(self, image1, image2):
 		# find the keypoints and descriptors with SIFT
-		kp1, des1 = self.sift.detectAndCompute(image1,None)
-		kp2, des2 = self.sift.detectAndCompute(image2,None)
+		kp1, des1 = self.sift.detectAndCompute(image2,None)
+		kp2, des2 = self.sift.detectAndCompute(image1,None)
 		matches = self.flann.knnMatch(des1,des2,k=2)
 
-		good = 0
+		good = 0.0
+		allMatches = 0.0
 		for m,n in matches:
-		    if m.distance < self.distanceFactor * n.distance:
-		        good += 1
+			allMatches += 1
+			if m.distance < self.distanceFactor * n.distance:
+				good += 1
 		
 		print good
-		return (good > self.minGoods)
+		print "%d/%d" % (good, allMatches)
+		return ((good/allMatches) > self.minGoodsPercentaje)
 
 
 	def imagesCompare(self, image1, image2):
-		return self.imagesCompareTM(image1, image2)
+		return self.imagesCompareSIFT(image1, image2)
 
 
-	def imagesCompareTM(self, image1, image2):
-		res = cv2.matchTemplate(self.toGrayScale(image1),
-								self.toGrayScale(image2),
-								cv2.TM_CCOEFF_NORMED)
+	def imagesCompareTempleateMatching(self, image1, image2):
+		res = cv2.matchTemplate(
+			self.toGrayScale(image1),
+			self.toGrayScale(image2),
+			cv2.TM_CCOEFF_NORMED)
 		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 		return (max_val > self.templateMatchingLimit)
 		
@@ -141,11 +147,10 @@ class CV2Wrapper(object):
 	def imagesCompareMaths(self, image1, image2):
 		im1Gray = self.toGrayScale(image1)
 		im2Gray = self.toGrayScale(image2)
-		image1_norm = im1Gray/np.sqrt(np.sum(im1Gray**2))
-		image2_norm = im2Gray/np.sqrt(np.sum(im2Gray**2))
+		image1_norm = im1Gray / np.sqrt(np.sum(im1Gray ** 2))
+		image2_norm = im2Gray / np.sqrt(np.sum(im2Gray ** 2))
 
-		product = image1_norm*image2_norm
-		print np.sum(product)
+		product = image1_norm * image2_norm
 
 		return (np.sum(product) > 0.9)
 
@@ -153,9 +158,15 @@ class CV2Wrapper(object):
 	def _scaleToDefaultSize(self, image):
 		height, width = image.shape[:2]
 
-		scaleH = 1.0*self.maxHeight/height
-		scaleW = 1.0*self.maxWidth/width
+		scaleH = 1.0 * self.maxHeight / height
+		scaleW = 1.0 * self.maxWidth / width
 
 		scaleFactor = scaleH if scaleH < scaleW else scaleW
 
-		return cv2.resize(image,None,fx=scaleFactor, fy=scaleFactor, interpolation = cv2.INTER_CUBIC), scaleFactor
+		return cv2.resize(
+				image,
+				None,
+				fx=scaleFactor,
+				fy=scaleFactor,
+				interpolation=cv2.INTER_CUBIC
+			), scaleFactor
