@@ -50,9 +50,9 @@ class CV2Wrapper(object):
 
 		# Calculates Flann
 		FLANN_INDEX_KDTREE = 0
-		index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-		search_params = dict(checks = 50)
-		self.flann = cv2.FlannBasedMatcher(index_params, search_params)
+		indexParams = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+		searchParams = dict(checks = 50)
+		self.flann = cv2.FlannBasedMatcher(indexParams, searchParams)
 
 
 	def imageRead(self, path):
@@ -60,7 +60,7 @@ class CV2Wrapper(object):
 
 
 	def imageFromBinary(self, data):
-	  imgArray = np.asarray(bytearray(data), dtype=np.uint8)
+	  imgArray = np.asarray(bytearray(data), dtype = np.uint8)
 	  return cv2.imdecode(imgArray, cv2.IMREAD_UNCHANGED)
 
 
@@ -78,11 +78,11 @@ class CV2Wrapper(object):
 		x = []
 		for cascade in self.faceCascades:
 			detected = cascade.detectMultiScale(
-				image=imageGray, 
-				scaleFactor=self.scaleFactor, 
-				minNeighbors=self.minNeighbors,
-				flags=cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT | cv2.CASCADE_DO_ROUGH_SEARCH,
-				minSize=self.minSize)
+				image = imageGray, 
+				scaleFactor = self.scaleFactor, 
+				minNeighbors = self.minNeighbors,
+				flags = cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT | cv2.CASCADE_DO_ROUGH_SEARCH,
+				minSize = self.minSize)
 			
 			x.extend(detected)
 		return x
@@ -113,11 +113,14 @@ class CV2Wrapper(object):
 		return cv2.imencode('.jpg', image)[1].tostring()
 
 
-	def imagesCompareSIFT(self, image1, image2):
+	def toSIFTMatrix(self, image):
 		# find the keypoints and descriptors with SIFT
-		kp1, des1 = self.sift.detectAndCompute(image2,None)
-		kp2, des2 = self.sift.detectAndCompute(image1,None)
-		matches = self.flann.knnMatch(des1,des2,k=2)
+		__kp, des = self.sift.detectAndCompute(image, None)
+		return des
+
+	
+	def compareSIFTMatrix(self, matrix1, matrix2):
+		matches = self.flann.knnMatch(matrix1, matrix2, k=2)
 
 		good = 0.0
 		allMatches = 0.0
@@ -128,7 +131,15 @@ class CV2Wrapper(object):
 		
 		print good
 		print "%d/%d" % (good, allMatches)
-		return ((good/allMatches) > self.minGoodsPercentaje)
+		return ((good / allMatches) > self.minGoodsPercentaje)	
+
+
+	def imagesCompareSIFT(self, image1, image2):
+		# find the keypoints and descriptors with SIFT
+		des1 = self.toSIFTMatrix(image2)
+		des2 = self.toSIFTMatrix(image1)
+
+		return self.compareSIFTMatrix(des1, des2)
 
 
 	def imagesCompare(self, image1, image2):

@@ -1,5 +1,6 @@
 import sqlite3
 
+
 class DBWrapper(object):
 
 	def __init__(self,
@@ -7,6 +8,7 @@ class DBWrapper(object):
 
 		# self.dbPath = dbPath;
 		self.conn = sqlite3.connect(dbPath)
+
 
 	# Still need to define what we are gonna save about image comparison
 	def createBaseTables(self):
@@ -20,10 +22,17 @@ class DBWrapper(object):
 											)''')
 		self.conn.commit()
 
+
 	def insertToFacebank(self, latitude, longitude):
 		cursor = self.conn.cursor()
 		cursor.execute("INSERT INTO faceBank (latitude, longitude) VALUES (" + str(latitude) + ", " + str(longitude) + ")")
 		self.conn.commit()
+
+
+	def addPattern(self, personName, mtxs):
+		print "Save PK:<%s>\nMatrices:" % personName
+		print mtxs
+
 
 	def closeDB(self):
 		self.conn.close()

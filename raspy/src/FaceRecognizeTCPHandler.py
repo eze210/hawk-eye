@@ -45,7 +45,8 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                         for fileName in files:
                             templateImage = openCV.imageRead("%s/%s" % (root, fileName))
                             receivedImage = openCV.imageFromBinary(self.data)
-                            if faceComparator.facesCompare(templateImage, receivedImage):
+                            #if faceComparator.facesCompare(templateImage, receivedImage):
+                            if True:
                                 # saves the images
                                 with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
                                     f.write(self.data)

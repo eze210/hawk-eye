@@ -1,4 +1,5 @@
 import SocketServer
+
 from ComputerVision.FaceDetector import FaceDetector
 from ComputerVision.CV2Wrapper import CV2Wrapper
 
