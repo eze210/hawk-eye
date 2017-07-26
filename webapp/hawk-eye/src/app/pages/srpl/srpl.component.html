@@ -1,3 +1,12 @@
-<p>
-  srpl works!
-</p>
+<h1>
+<!-- here we echo the title from the component -->
+  {{title}}
+</h1>
+
+<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
+<input type="file" name="photo" ng2FileSelect [uploader]="uploader" />
+<input type="number" name="type" value="0" hidden />
+<!-- button to trigger the file upload when submitted -->
+<button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+      Upload Image
+</button>

@@ -9,6 +9,7 @@ import { FooterComponent } from './footer/footer.component';
 import { UtilsService } from './core/utils.service';
 import { SrplComponent } from './pages/srpl/srpl.component';
 import { FormsModule } from '@angular/forms';
+import { FileSelectDirective } from 'ng2-file-upload';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { FormsModule } from '@angular/forms';
     HomeComponent,
     HeaderComponent,
     FooterComponent,
-    SrplComponent
+    SrplComponent,
+    FileSelectDirective
   ],
   imports: [
     BrowserModule,

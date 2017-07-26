@@ -1,10 +1,10 @@
 import sqlite3
-
+import time
 
 class DBWrapper(object):
 
 	def __init__(self,
-				 dbPath = 'TrackingCollection.db'):
+				 dbPath = '/tmp/TrackingCollection.db'):
 
 		# self.dbPath = dbPath;
 		self.conn = sqlite3.connect(dbPath)
@@ -17,8 +17,8 @@ class DBWrapper(object):
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
 											(id INTEGER PRIMARY KEY AUTOINCREMENT,
 											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-											name TEXT,
-											imageUrl TEXT,
+											-- name TEXT,
+											imagePath TEXT,
 											type INTEGER
 											)''')
 
@@ -34,9 +34,19 @@ class DBWrapper(object):
 		self.conn.commit()
 
 
+	def getFaces(self, typeId):
+		cursor = self.conn.cursor()
+		query = cursor.execute("select id, imagePath from faceBank WHERE type = " + str(typeId) +";")
+		return query.fetchall()
+
 	def insertLocationTrace(self, face_id, latitude, longitude):
 		cursor = self.conn.cursor()
 		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ")")
+		self.conn.commit()
+
+	def insertNewFaceImage(self, imagePath, typeUp):
+		cursor = self.conn.cursor()
+		cursor.execute("INSERT INTO faceBank (imagePath, type) VALUES ('" + imagePath + "', " + str(typeUp) + ")")
 		self.conn.commit()
 
 
