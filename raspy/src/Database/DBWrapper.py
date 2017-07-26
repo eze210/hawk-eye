@@ -8,7 +8,8 @@ class DBWrapper(object):
 
 		# self.dbPath = dbPath;
 		self.conn = sqlite3.connect(dbPath)
-
+		self.typeSRPL = 0
+		self.typeSRE = 1
 
 	# Still need to define what we are gonna save about image comparison
 	def createBaseTables(self):
@@ -17,7 +18,8 @@ class DBWrapper(object):
 											(id INTEGER PRIMARY KEY AUTOINCREMENT,
 											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 											name TEXT,
-											imageUrl TEXT
+											imageUrl TEXT,
+											type INTEGER
 											)''')
 
 		cursor.execute('''CREATE TABLE IF NOT EXISTS locationHistory

@@ -9,7 +9,7 @@ app = Flask(__name__)
 api = Api(app)
 
 parser = reqparse.RequestParser()
-parser.add_argument('task')
+parser.add_argument('name')
 
 class FaceBank(Resource):
     def get(self):
