@@ -15,17 +15,26 @@ class DBWrapper(object):
 		cursor = self.conn.cursor()
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
 											(id INTEGER PRIMARY KEY AUTOINCREMENT,
-											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-											updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-											latitude DECIMAL(9,6),
-											longitude DECIMAL(9,6)
+											created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+											name TEXT,
+											imageUrl TEXT
 											)''')
+
+		cursor.execute('''CREATE TABLE IF NOT EXISTS locationHistory
+											(id INTEGER PRIMARY KEY AUTOINCREMENT,
+											face_id INTEGER
+											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+											latitude DECIMAL(9,6),
+											longitude DECIMAL(9,6),
+											FOREIGN KEY (face_id) REFERENCES faceBank(id)
+											)''')
+		
 		self.conn.commit()
 
 
-	def insertToFacebank(self, latitude, longitude):
+	def insertLocationTrace(self, face_id, latitude, longitude):
 		cursor = self.conn.cursor()
-		cursor.execute("INSERT INTO faceBank (latitude, longitude) VALUES (" + str(latitude) + ", " + str(longitude) + ")")
+		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ")")
 		self.conn.commit()
 
 
