@@ -19,7 +19,7 @@ import { FooterComponent } from './footer/footer.component';
     AppRoutingModule
   ],
   providers: [
-  	Title,
+   Title,
   ],
   bootstrap: [AppComponent]
 })
