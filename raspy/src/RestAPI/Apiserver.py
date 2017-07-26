@@ -39,8 +39,8 @@ class FaceBankUploadSRPL(Resource):
                 'Access-Control-Allow-Methods' : 'PUT,GET' }
     def post(self):
         args = parserUpload.parse_args()
-        args['photo'].save(args['photo'].filename);
         path = os.getcwd() + "/SRPL/" + args['photo'].filename
+        args['photo'].save(path);
         dbw.insertNewFaceImage(path, 0)
         return {'success': args['photo'].filename}, 201, {'Access-Control-Allow-Origin': '*'}
 
