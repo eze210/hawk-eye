@@ -15,7 +15,7 @@ class DBWrapper(object):
 		cursor = self.conn.cursor()
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
 											(id INTEGER PRIMARY KEY AUTOINCREMENT,
-											created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 											name TEXT,
 											imageUrl TEXT
 											)''')
