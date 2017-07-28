@@ -8,6 +8,7 @@ from flask_jsonpify import jsonify
 import imp
 db = imp.load_source('DBWrapper', '../Database/DBWrapper.py')
 dbw = db.DBWrapper()
+import base64
 
 # db_connect = create_engine('sqlite:///tmp/TrackingCollection.db')
 app = Flask(__name__)
@@ -22,6 +23,13 @@ class FaceBankSRPL(Resource):
         # query = conn.execute("select imagePath from faceBank WHERE type = 0;")
         # result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
         result = dbw.getFaces(0)
+        i = 0
+        for var in result:
+            with open(var[1], "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+            new = (var[0], encoded_string)
+            result[i] = new
+            i += 1
         return jsonify(result)
 
 class LocationHistory(Resource):
