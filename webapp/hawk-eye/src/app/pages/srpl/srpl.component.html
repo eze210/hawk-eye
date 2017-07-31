@@ -10,3 +10,6 @@
 <button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
       Upload Image
 </button>
+ <div class="progress" style="">
+    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }"></div>
+</div>

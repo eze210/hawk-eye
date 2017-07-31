@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 //import the file uploader plugin
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
 //define the constant url we would be uploading to.
-const URL = 'http://localhost:5002/faces/uploadsrpl';
+const URL = 'http://localhost:5002/faces/srpl';
 
 @Component({
   selector: 'app-srpl',

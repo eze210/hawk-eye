@@ -10,6 +10,9 @@ import { UtilsService } from './core/utils.service';
 import { SrplComponent } from './pages/srpl/srpl.component';
 import { FormsModule } from '@angular/forms';
 import { FileSelectDirective } from 'ng2-file-upload';
+import { SrplgetComponent } from './pages/srplget/srplget.component';
+import { ServerService} from './shared/server.service'
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -18,16 +21,19 @@ import { FileSelectDirective } from 'ng2-file-upload';
     HeaderComponent,
     FooterComponent,
     SrplComponent,
-    FileSelectDirective
+    FileSelectDirective,
+    SrplgetComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpModule,
   ],
   providers: [
    Title,
    UtilsService,
+   ServerService,
   ],
   bootstrap: [AppComponent]
 })

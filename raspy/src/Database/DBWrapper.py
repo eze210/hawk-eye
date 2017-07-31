@@ -33,11 +33,10 @@ class DBWrapper(object):
 		
 		self.conn.commit()
 
-
 	def getFaces(self, typeId):
 		cursor = self.conn.cursor()
 		self.conn.text_factory = str
-		query = cursor.execute("select id, imagePath from faceBank WHERE type = " + str(typeId) +";")
+		query = cursor.execute("select id as id, imagePath as image from faceBank WHERE type = " + str(typeId) +";")
 		return query.fetchall()
 
 	def insertLocationTrace(self, face_id, latitude, longitude):
