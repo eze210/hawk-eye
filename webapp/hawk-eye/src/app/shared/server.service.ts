@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ServerService {
 
-	public url = 'http://localhost:5002'
+	public url = 'http://192.168.1.112:5002'
 
 	constructor (
     private http: Http

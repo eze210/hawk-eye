@@ -1,5 +1,6 @@
-<img *ngFor="let photo of photos" [src]="photo.imageData" class="img-thumbnail">
+<!-- <img *ngFor="let photo of photos" [src]="photo.imageData" class="img-thumbnail"> -->
 
-<!-- <div *ngFor="let photo of photos">
-   <img src={{photo.imagePath}} class="img-thumbnail" />
-</div> -->
+<div *ngFor="let photo of photos">
+   <img src={{photo.imageData}} class="img-thumbnail" />
+   <label>{{photo[2]}}</label>
+</div>

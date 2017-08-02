@@ -17,7 +17,7 @@ class DBWrapper(object):
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
 											(id INTEGER PRIMARY KEY AUTOINCREMENT,
 											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-											-- name TEXT,
+											name TEXT,
 											imagePath TEXT,
 											type INTEGER
 											)''')
@@ -36,19 +36,25 @@ class DBWrapper(object):
 	def getFaces(self, typeId):
 		cursor = self.conn.cursor()
 		self.conn.text_factory = str
-		query = cursor.execute("select id as id, imagePath as image from faceBank WHERE type = " + str(typeId) +";")
+		query = cursor.execute("select id, imagePath, name from faceBank WHERE type = " + str(typeId) +";")
 		return query.fetchall()
 
 	def insertLocationTrace(self, face_id, latitude, longitude):
 		cursor = self.conn.cursor()
 		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ")")
 		self.conn.commit()
+		return cursor.lastrowid
 
-	def insertNewFaceImage(self, imagePath, typeUp):
+	def insertNewFaceImage(self, name, imagePath, typeUp):
 		cursor = self.conn.cursor()
-		cursor.execute("INSERT INTO faceBank (imagePath, type) VALUES ('" + imagePath + "', " + str(typeUp) + ")")
+		cursor.execute("INSERT INTO faceBank (name, imagePath, type) VALUES ('" + name + "', '" + imagePath + "', '" + str(typeUp) + "')")
 		self.conn.commit()
+		return cursor.lastrowid
 
+	def updateName(self, id, name):
+		cursor = self.conn.cursor()
+		cursor.execute("UPDATE faceBank set name = '" + name + "' WHERE id = " + str(id))
+		self.conn.commit()		
 
 	def addPattern(self, personName, mtxs):
 		print "Save PK:<%s>\nMatrices:" % personName

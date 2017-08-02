@@ -15,7 +15,8 @@ app = Flask(__name__)
 api = Api(app)
 
 parserUpload = reqparse.RequestParser()
-parserUpload.add_argument('photo', type=werkzeug.datastructures.FileStorage, location='files')
+parserUpload.add_argument('uploadFile', type=werkzeug.datastructures.FileStorage, location='files')
+parserUpload.add_argument('name')
 
 class LocationHistory(Resource):
     def get(self, face_id):
@@ -32,21 +33,19 @@ class FaceBankSRPL(Resource):
                 'Access-Control-Allow-Methods' : 'PUT,GET' }
     def post(self):
         args = parserUpload.parse_args()
-        path = os.getcwd() + "/SRPL/" + args['photo'].filename
-        args['photo'].save(path);
-        dbw.insertNewFaceImage(path, 0)
-        return {'success': args['photo'].filename}, 201, {'Access-Control-Allow-Origin': '*'}
+        path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
+        args['uploadFile'].save(path);
+        name = args['name']
+        lastId = dbw.insertNewFaceImage(name, path, 0)
+        return {'id': lastId}, 201, {'Access-Control-Allow-Origin': '*'}
     
     def get(self):
-        # conn = db_connect.connect()
-        # query = conn.execute("select imagePath from faceBank WHERE type = 0;")
-        # result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
         result = dbw.getFaces(0)
         i = 0
         for var in result:
             with open(var[1], "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
-            new = (var[0], encoded_string)
+            new = (var[0], encoded_string, var[2])
             result[i] = new
             i += 1
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
@@ -56,4 +55,4 @@ api.add_resource(LocationHistory, '/locations/<face_id>')
 
 
 if __name__ == '__main__':
-     app.run(port='5002')
+     app.run(host= '192.168.1.112', port='5002')

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-//import the file uploader plugin
-import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
-//define the constant url we would be uploading to.
-const URL = 'http://localhost:5002/faces/srpl';
+import { Http, Response, RequestOptions, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs/Observable';
+const URL = 'http://192.168.1.112:5002/faces/srpl';
+const URLName = 'http://192.168.1.112:5002/faces/name'
 
 @Component({
   selector: 'app-srpl',
@@ -10,21 +11,34 @@ const URL = 'http://localhost:5002/faces/srpl';
   styleUrls: ['./srpl.component.scss']
 })
 export class SrplComponent implements OnInit {
-	//declare a property called fileuploader and assign it to an instance of a new fileUploader.
-  //pass in the Url to be uploaded to, and pass the itemAlais, which would be the name of the //file input when sending the post request.
-  public uploader:FileUploader = new FileUploader({url: URL, itemAlias: 'photo'});
   title = 'Upload to SRPL';
+  data
+  constructor(private http: Http) {
+    this.data = {
+      name: ''
+    };
+  }
 
-  constructor() { }
+  fileChange(event) {
+    console.log(this.data);
+    let fileList: FileList = event.target.files;
+    if(fileList.length > 0) {
+        let file: File = fileList[0];
+        let formData:FormData = new FormData();
+        formData.append('uploadFile', file, file.name);
+        formData.append('name', this.data["name"]);
+        let headers = new Headers();
+        this.http.post(URL, formData)
+            .map(res => res.json())
+            .catch(error => Observable.throw(error))
+            .subscribe(
+                data => console.log('success'),
+                error => console.log(error)
+            )
+    }
+  }
 
   ngOnInit() {
-    //override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
-    this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
-    //overide the onCompleteItem property of the uploader so we are 
-    //able to deal with the server response.
-    this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
-        console.log("ImageUpload:uploaded:", item, status, response);
-    };
   }
 
 }
