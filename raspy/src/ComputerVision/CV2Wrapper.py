@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-
 class CV2Wrapper(object):
 	"""OpenCV 2 Wrapper"""
 
@@ -39,7 +38,7 @@ class CV2Wrapper(object):
 			#'static/haarcascade_frontalface_alt2.xml',
 			#'static/haarcascade_frontalface_alt_tree.xml',
 
-			'static/haarcascade_frontalface_default.xml'
+			'/raspy/static/haarcascade_frontalface_default.xml'
 		]
 
 		# Loads trained XML data

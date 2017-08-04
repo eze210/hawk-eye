@@ -56,8 +56,8 @@ class DBWrapper(object):
 		cursor.execute("UPDATE faceBank set name = '" + name + "' WHERE id = " + str(id))
 		self.conn.commit()		
 
-	def addPattern(self, personName, mtxs):
-		print "Save PK:<%s>\nMatrices:" % personName
+	def addPattern(self, id, mtxs):
+		print "Save PK:<%s>\nMatrices:" % str(id)
 		print mtxs
 
 

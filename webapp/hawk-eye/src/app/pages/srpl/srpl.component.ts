@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
-const URL = 'http://192.168.1.112:5002/faces/srpl';
-const URLName = 'http://192.168.1.112:5002/faces/name'
+const URL = 'http://172.17.0.2:8000/faces/srpl';
+const URLName = 'http://172.17.0.2:8000/faces/name'
 
 @Component({
   selector: 'app-srpl',

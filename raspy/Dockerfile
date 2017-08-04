@@ -62,5 +62,7 @@ RUN cd opencv/build && cmake -D CMAKE_BUILD_TYPE=RELEASE \
 RUN cd opencv/build && make install
 RUN export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages
 RUN ldconfig && ln -s /usr/local/lib/python2.7/site-packages/cv2.so cv2.so
+RUN pip install --upgrade pip
+RUN pip install flask flask-jsonpify flask-sqlalchemy flask-restful
 
 EXPOSE 8000
