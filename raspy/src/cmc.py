@@ -2,7 +2,6 @@ import socket, fcntl, struct,  threading
 from CityMonitorCenter import CityMonitorCenter
 from WebInterfaceServer import WebInterfaceServer
 
-
 def _get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     return socket.inet_ntoa(fcntl.ioctl(

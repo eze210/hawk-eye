@@ -12,7 +12,6 @@ import base64
 cv2wrapper = imp.load_source('CV2Wrapper', '../ComputerVision/CV2Wrapper.py')
 faceDetector = imp.load_source('FaceDetector', '../ComputerVision/FaceDetector.py')
 
-
 # db_connect = create_engine('sqlite:///tmp/TrackingCollection.db')
 app = Flask(__name__)
 api = Api(app)
@@ -39,16 +38,24 @@ class FaceBankSRPL(Resource):
         path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
         args['uploadFile'].save(path);
         name = args['name']
-        lastId = dbw.insertNewFaceImage(name, path, 0)
         faced = faceDetector.FaceDetector()
         cv2 = cv2wrapper.CV2Wrapper()
         with open(path, "rb") as image_file:
             data = image_file.read()
         faces = []
-        faces = faces + [face for face in faced.detectFromBinary(data)]
+        faces = faces + [cv2.imageToBinary(face) for face in faced.detectFromBinary(data)]
         print "Detected %d faces" % len(faces)
-        dbw.addPattern(lastId, [cv2.toSIFTMatrix(face) for face in faces])
-        return {'id': lastId}, 201, {'Access-Control-Allow-Origin': '*'}
+        ids = []
+        number = 1
+        for found in faces:
+            filename = 'SRPL/%s_%d.jpg' % (args['uploadFile'].filename, number)
+            with open(filename, 'wb') as f:
+                f.write(found)
+            lastId = dbw.insertNewFaceImage(name, os.getcwd() + '/' + filename, 0)
+            ids.append(lastId)
+            number = number + 1
+        os.remove(path)
+        return {'ids': ids}, 201, {'Access-Control-Allow-Origin': '*'}
     
     def get(self):
         result = dbw.getFaces(0)
@@ -66,4 +73,4 @@ api.add_resource(LocationHistory, '/locations/<face_id>')
 
 
 if __name__ == '__main__':
-     app.run(host= '172.17.0.2', port='8000')
+     app.run(host= '172.17.0.2', port='5200')

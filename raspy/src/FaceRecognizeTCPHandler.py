@@ -2,7 +2,7 @@ import os
 import SocketServer
 from ComputerVision.FaceComparator import FaceComparator
 from ComputerVision.CV2Wrapper import CV2Wrapper
-
+from Database.DBWrapper import DBWrapper
 
 class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
     """
@@ -27,13 +27,13 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
             while True:
                 # receives the cordinates from the CMB
                 cordinates = self._readCordinates()
-
+                print "%s" % cordinates
                 # receives the timestamp
                 timestamp = self._readTimestamp()
-
                 # receives the number of images to receive
                 numberOfImages = self._readLength()
-
+                db = DBWrapper()
+                result = db.getFacesPaths()
                 for x in xrange(0, numberOfImages):
                     # receives the length of an image
                     length = self._readLength()
@@ -41,16 +41,21 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                     # receives the image
                     self._readAll(length)
 
-                    for root, dirs, files in os.walk("./templates"):
-                        for fileName in files:
-                            templateImage = openCV.imageRead("%s/%s" % (root, fileName))
+                    # for root, dirs, files in os.walk("./templates"):
+                    for file in result:
+                        # for fileName in files:
+                            # templateImage = openCV.imageRead("%s/%s" % (root, fileName))
+                            templateImage = openCV.imageRead(file[1])
                             receivedImage = openCV.imageFromBinary(self.data)
                             #if faceComparator.facesCompare(templateImage, receivedImage):
-                            if True:
+                            if faceComparator.facesCompare(templateImage, receivedImage):
+                            # if True:
                                 # saves the images
-                                with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
-                                    f.write(self.data)
-                                print "Image %d was saved" % x
+                                # with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
+                                #     f.write(self.data)
+                                # print "Image %d was saved" % x
+                                lat, longi = cordinates.split(",")
+                                db.insertLocationTrace(file[0], lat, longi)
                                 print "MATCH"
                             else:
                                 print "NO MATCH"

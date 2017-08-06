@@ -66,3 +66,4 @@ RUN pip install --upgrade pip
 RUN pip install flask flask-jsonpify flask-sqlalchemy flask-restful
 
 EXPOSE 8000
+EXPOSE 5200

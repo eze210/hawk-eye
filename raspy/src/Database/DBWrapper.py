@@ -6,12 +6,10 @@ class DBWrapper(object):
 	def __init__(self,
 				 dbPath = '/tmp/TrackingCollection.db'):
 
-		# self.dbPath = dbPath;
 		self.conn = sqlite3.connect(dbPath)
 		self.typeSRPL = 0
 		self.typeSRE = 1
 
-	# Still need to define what we are gonna save about image comparison
 	def createBaseTables(self):
 		cursor = self.conn.cursor()
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
@@ -19,6 +17,7 @@ class DBWrapper(object):
 											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 											name TEXT,
 											imagePath TEXT,
+											siftPath TEXT,
 											type INTEGER
 											)''')
 
@@ -39,6 +38,12 @@ class DBWrapper(object):
 		query = cursor.execute("select id, imagePath, name from faceBank WHERE type = " + str(typeId) +";")
 		return query.fetchall()
 
+	def getFacesPaths(self):
+		cursor = self.conn.cursor()
+		self.conn.text_factory = str
+		query = cursor.execute("select id, imagePath from faceBank;")
+		return query.fetchall()
+
 	def insertLocationTrace(self, face_id, latitude, longitude):
 		cursor = self.conn.cursor()
 		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ")")
@@ -57,9 +62,10 @@ class DBWrapper(object):
 		self.conn.commit()		
 
 	def addPattern(self, id, mtxs):
-		print "Save PK:<%s>\nMatrices:" % str(id)
-		print mtxs
-
+		# print "Save PK:<%s>\nMatrices:" % str(id)
+		# print mtxs
+		cursor = self.conn.cursor()
+		cursor.execute("UPDATE faceBank SET siftPath = '" + mtxs + "' WHERE id = " + str(id))
 
 	def closeDB(self):
 		self.conn.close()
