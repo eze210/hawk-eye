@@ -50,22 +50,23 @@ class DBWrapper(object):
 		self.conn.commit()
 		return cursor.lastrowid
 
+	def getLocationsOf(self, face_id):
+		cursor = self.conn.cursor()
+		self.conn.text_factory = str
+		query = cursor.execute("SELECT latitude, longitude FROM locationHistory WHERE face_id = %s;" % face_id)
+		return query.fetchall()				
+
 	def insertNewFaceImage(self, name, imagePath, typeUp):
 		cursor = self.conn.cursor()
 		cursor.execute("INSERT INTO faceBank (name, imagePath, type) VALUES ('" + name + "', '" + imagePath + "', '" + str(typeUp) + "')")
 		self.conn.commit()
 		return cursor.lastrowid
 
-	def updateName(self, id, name):
-		cursor = self.conn.cursor()
-		cursor.execute("UPDATE faceBank set name = '" + name + "' WHERE id = " + str(id))
-		self.conn.commit()		
-
-	def addPattern(self, id, mtxs):
-		# print "Save PK:<%s>\nMatrices:" % str(id)
-		# print mtxs
-		cursor = self.conn.cursor()
-		cursor.execute("UPDATE faceBank SET siftPath = '" + mtxs + "' WHERE id = " + str(id))
+	# def addPattern(self, id, mtxs):
+	# 	# print "Save PK:<%s>\nMatrices:" % str(id)
+	# 	# print mtxs
+	# 	cursor = self.conn.cursor()
+	# 	cursor.execute("UPDATE faceBa-nk SET siftPath = '" + mtxs + "' WHERE id = " + str(id))
 
 	def closeDB(self):
 		self.conn.close()

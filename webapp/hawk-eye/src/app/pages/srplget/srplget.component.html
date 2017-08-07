@@ -1,6 +1,8 @@
 <!-- <img *ngFor="let photo of photos" [src]="photo.imageData" class="img-thumbnail"> -->
 
 <div *ngFor="let photo of photos">
-   <img src={{photo.imageData}} class="img-thumbnail" width="20%"/>
-   <label>{{photo[2]}}</label>
+	 <a (click)="getLocations(photo[0])">
+	   <img src={{photo.imageData}} class="img-thumbnail" width="20%"/>
+	   <label>{{photo[2]}}</label>
+   </a>
 </div>

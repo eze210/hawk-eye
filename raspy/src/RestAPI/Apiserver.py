@@ -20,13 +20,13 @@ parserUpload = reqparse.RequestParser()
 parserUpload.add_argument('uploadFile', type=werkzeug.datastructures.FileStorage, location='files')
 parserUpload.add_argument('name')
 
-class LocationHistory(Resource):
+class LocationHistorySRPL(Resource):
     def get(self, face_id):
         # conn = db_connect.connect()
         # query = conn.execute("select * FROM locationHistory WHERE face_id = %d " %int(face_id))
         # result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
-        result = dbw.getLocationHistory(face_id)
-        return jsonify(dict(result))
+        result = dbw.getLocationsOf(face_id)
+        return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
         
 class FaceBankSRPL(Resource):
     def options(self):
@@ -69,7 +69,7 @@ class FaceBankSRPL(Resource):
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
 
 api.add_resource(FaceBankSRPL, '/faces/srpl')
-api.add_resource(LocationHistory, '/locations/<face_id>')
+api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 
 
 if __name__ == '__main__':

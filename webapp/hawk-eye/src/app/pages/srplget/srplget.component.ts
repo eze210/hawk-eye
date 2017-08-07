@@ -11,10 +11,7 @@ export class SrplgetComponent implements OnInit {
   constructor(private ServerService : ServerService) { }
   photos = [];
   faces = {};
-
-  loadSRPL() {
-    this.ServerService.getSRPL().subscribe(data => this.faces = data);
-  }
+  coordinates = [];
 
   ngOnInit() {
   	this.ServerService.getSRPL()
@@ -24,6 +21,13 @@ export class SrplgetComponent implements OnInit {
 		        photo.imageData = 'data:image/png;base64,' + photo[1];
 		    };
 		});
+  }
+
+  getLocations(id) {
+    this.ServerService.getSRPLLocations(id)
+    .subscribe(locations => {
+        this.coordinates = locations["data"]
+    });
   }
 
 }

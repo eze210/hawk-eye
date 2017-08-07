@@ -16,4 +16,9 @@ export class ServerService {
     .map((res:Response) => res.json());
   }
 
+  getSRPLLocations(id) {
+  	return this.http.get(this.url + '/locations/srpl/' + id)
+  	.map((res : Response) => res.json());
+  }
+
 }
