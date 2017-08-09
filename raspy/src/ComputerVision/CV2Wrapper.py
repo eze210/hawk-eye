@@ -8,7 +8,7 @@ class CV2Wrapper(object):
 				 maxWidth = 640.0, 
 				 maxHeight = 640.0,
 				 distanceFactor = 0.8,
-				 minGoodsPercentaje = 0.2,
+				 minGoodsPercentaje = 0.045,
 				 minSize = (30,30),
 				 scaleFactor = 1.00655,
 				 minNeighbors = 10,
@@ -33,12 +33,11 @@ class CV2Wrapper(object):
 			#'static/haarcascade_smile.xml',
 
 			# Face related
-			#'static/lbpcascade_frontalface.xml',
-			#'static/haarcascade_frontalface_alt.xml',
-			#'static/haarcascade_frontalface_alt2.xml',
-			#'static/haarcascade_frontalface_alt_tree.xml',
-
-			'/raspy/static/haarcascade_frontalface_default.xml'
+			# '/raspy/static/lbpcascade_frontalface.xml',
+			# '/raspy/static/haarcascade_frontalface_alt.xml',
+			# '/raspy/static/haarcascade_frontalface_alt2.xml',
+			'/raspy/static/haarcascade_frontalface_alt_tree.xml',
+			# '/raspy/static/haarcascade_frontalface_default.xml'
 		]
 
 		# Loads trained XML data
@@ -119,6 +118,10 @@ class CV2Wrapper(object):
 
 	
 	def compareSIFTMatrix(self, matrix1, matrix2):
+		if matrix1 is None or matrix2 is None:
+			return False
+		if matrix1.size == 0 or matrix2.size == 0:
+			return False
 		matches = self.flann.knnMatch(matrix1, matrix2, k=2)
 
 		good = 0.0
@@ -130,6 +133,8 @@ class CV2Wrapper(object):
 		
 		print good
 		print "%d/%d" % (good, allMatches)
+		if allMatches == 0:
+			return False
 		return ((good / allMatches) > self.minGoodsPercentaje)	
 
 
