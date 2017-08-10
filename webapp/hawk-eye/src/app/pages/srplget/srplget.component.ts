@@ -15,6 +15,7 @@ export class SrplgetComponent implements OnInit {
   faces = {};
   coordinates = [];
   map;
+  marker = [];
   ngOnInit() {
   	this.ServerService.getSRPL()
 		.subscribe(photos => {
@@ -31,24 +32,23 @@ export class SrplgetComponent implements OnInit {
       });
   }
 
-  getLocations(id) {
+  getLocations(id, name) {
     this.ServerService.getSRPLLocations(id)
     .subscribe(locations => {
         this.coordinates = locations["data"];
-        var marker;
         var infowindow = new google.maps.InfoWindow();
         for(var i = 0; i < this.coordinates.length; i++) {
-          marker = new google.maps.Marker({
+          this.marker = new google.maps.Marker({
             position: new google.maps.LatLng(this.coordinates[i][0], this.coordinates[i][1]),
             map: this.map
           });
 
-          google.maps.event.addListener(marker, 'click', (function(marker, i) {
+          google.maps.event.addListener(this.marker, 'click', (function(marker, i) {
             return function() {
-              infowindow.setContent("1");
-              infowindow.open(this.map, marker);
+              infowindow.setContent(name);
+              infowindow.open(this.map, this.marker);
             }
-          })(marker, i));
+          })(this.marker, i));
         }
     });
   }
