@@ -14,7 +14,7 @@ export class SrplgetComponent implements OnInit {
   photos = [];
   faces = {};
   coordinates = [];
-
+  map;
   ngOnInit() {
   	this.ServerService.getSRPL()
 		.subscribe(photos => {
@@ -25,49 +25,31 @@ export class SrplgetComponent implements OnInit {
 		});
 
     // Maps
-    var directionsService = new google.maps.DirectionsService;
-    var directionsDisplay = new google.maps.DirectionsRenderer;
-    var map = new google.maps.Map(document.getElementById('map'), {
+    this.map = new google.maps.Map(document.getElementById('map'), {
         zoom: 7,
-        center: {lat: 41.85, lng: -87.65}
+        center: {lat: -34.7739036, lng: -58.320372}
       });
-    directionsDisplay.setMap(map);
-    calculateAndDisplayRoute(directionsService, directionsDisplay);
-
-    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-
-      var waypts = [];
-      var checkboxArray:any[] = [
-          'winnipeg', 'regina','calgary'
-      ];
-      for (var i = 0; i < checkboxArray.length; i++) {
-        waypts.push({
-          location: checkboxArray[i],
-          stopover: true
-        });
-
-      }
-
-      directionsService.route({
-        origin: {lat: 41.85, lng: -87.65},
-        destination: {lat: 49.3, lng: -123.12},
-        waypoints: waypts,
-        optimizeWaypoints: true,
-        travelMode: 'DRIVING'
-      }, function(response, status) {
-        if (status === 'OK') {
-          directionsDisplay.setDirections(response);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });
-    }
   }
 
   getLocations(id) {
     this.ServerService.getSRPLLocations(id)
     .subscribe(locations => {
-        this.coordinates = locations["data"]
+        this.coordinates = locations["data"];
+        var marker;
+        var infowindow = new google.maps.InfoWindow();
+        for(var i = 0; i < this.coordinates.length; i++) {
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(this.coordinates[i][0], this.coordinates[i][1]),
+            map: this.map
+          });
+
+          google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+              infowindow.setContent("1");
+              infowindow.open(this.map, marker);
+            }
+          })(marker, i));
+        }
     });
   }
 
