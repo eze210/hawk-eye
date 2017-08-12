@@ -13,6 +13,7 @@ import { FileSelectDirective } from 'ng2-file-upload';
 import { SrplgetComponent } from './pages/srplget/srplget.component';
 import { ServerService} from './shared/server.service'
 import { HttpModule } from '@angular/http';
+import { SrplsearchComponent } from './pages/srplsearch/srplsearch.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { HttpModule } from '@angular/http';
     FooterComponent,
     SrplComponent,
     FileSelectDirective,
-    SrplgetComponent
+    SrplgetComponent,
+    SrplsearchComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,8 @@
+<h1>
+<!-- here we echo the title from the component -->
+  {{title}}
+</h1>
+<input type="file" (change)="fileChange($event)" placeholder="Look up" accept=".jpg,.png,.jpeg">
+<div id="photos" *ngFor="let photo of photos">
+   <img src={{photo}} class="img-thumbnail" width="20%"/>
+</div>

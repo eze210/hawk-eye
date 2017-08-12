@@ -11,6 +11,7 @@ dbw = db.DBWrapper()
 import base64
 cv2wrapper = imp.load_source('CV2Wrapper', '../ComputerVision/CV2Wrapper.py')
 faceDetector = imp.load_source('FaceDetector', '../ComputerVision/FaceDetector.py')
+faceComparator = imp.load_source('FaceComparator', '../ComputerVision/FaceComparator.py')
 
 # db_connect = create_engine('sqlite:///tmp/TrackingCollection.db')
 app = Flask(__name__)
@@ -68,7 +69,38 @@ class FaceBankSRPL(Resource):
             i += 1
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
 
+
+class SearchFaceBankSRPL(Resource):
+    def options(self):
+        return {'Allow' : 'POST' }, 200, \
+                { 'Access-Control-Allow-Origin': '*', \
+                'Access-Control-Allow-Methods' : 'PUT,GET' }
+    def post(self):
+        args = parserUpload.parse_args()
+        path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
+        file = args['uploadFile'];
+        faced = faceDetector.FaceDetector()
+        faceComp = faceComparator.FaceComparator()
+        cv2 = cv2wrapper.CV2Wrapper()
+        faces = []
+        faces = faces + [cv2.imageToBinary(face) for face in faced.detectFromBinary(file.read())]
+        print "Detected %d faces" % len(faces)
+        result = dbw.getFacesPaths()
+        matches = []
+        for file in result:
+            for found in faces:
+                templateImage = cv2.imageRead(file[1])
+                receivedImage = cv2.imageFromBinary(found)
+                if faceComp.facesCompare(templateImage, receivedImage):
+                    print "Found a MATCH in search\n"
+                    with open(file[1], "rb") as image_file:
+                        encoded_string = base64.b64encode(image_file.read())
+                    matches.append(encoded_string)
+
+        return {'matches': matches}, 201, {'Access-Control-Allow-Origin': '*'}
+
 api.add_resource(FaceBankSRPL, '/faces/srpl')
+api.add_resource(SearchFaceBankSRPL, '/search/srpl')
 api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 
 

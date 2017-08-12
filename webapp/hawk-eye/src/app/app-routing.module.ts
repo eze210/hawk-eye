@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { SrplComponent } from './pages/srpl/srpl.component';
 import { SrplgetComponent } from './pages/srplget/srplget.component';
+import { SrplsearchComponent } from './pages/srplsearch/srplsearch.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'srplget',
     component: SrplgetComponent
+  },
+  {
+    path: 'srplsearch',
+    component: SrplsearchComponent
   }
 ];
 
