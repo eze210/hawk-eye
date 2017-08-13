@@ -19,7 +19,9 @@ def _read_ip_from_temp():
 
 
 HOST, PORT = _read_ip_from_temp()
-IM_NAMES = sys.argv[1:]
+latitude = sys.argv[1]
+longitude = sys.argv[2]
+IM_NAMES = sys.argv[3:]
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,7 +32,7 @@ try:
     sock.connect((HOST, PORT))
 
     # Sends longitude and latitude
-    cordinates = "-34.7739036,-58.320372"
+    cordinates =  latitude + "," + longitude#"-34.7739036,-58.320372"
     sock.sendall('%s\n' % cordinates)
 
     # Sends timestamp

@@ -21,7 +21,6 @@ export class SrplgetComponent implements OnInit {
 		.subscribe(photos => {
 		    this.photos = photos["data"];
 		    for (let photo of this.photos) {
-            console.log(photo);
 		        photo.imageData = 'data:image/png;base64,' + photo[1];
 		    };
 		});
@@ -47,7 +46,7 @@ export class SrplgetComponent implements OnInit {
           google.maps.event.addListener(this.marker, 'click', (function(marker, i) {
             return function() {
               infowindow.setContent(name);
-              infowindow.open(this.map, this.marker);
+              infowindow.open(this.map, marker);
             }
           })(this.marker, i));
         }

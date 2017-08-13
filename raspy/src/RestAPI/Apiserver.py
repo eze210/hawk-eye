@@ -95,7 +95,8 @@ class SearchFaceBankSRPL(Resource):
                     print "Found a MATCH in search\n"
                     with open(file[1], "rb") as image_file:
                         encoded_string = base64.b64encode(image_file.read())
-                    matches.append(encoded_string)
+                    new = (file[0], encoded_string, file[2])
+                    matches.append(new)
 
         return {'matches': matches}, 201, {'Access-Control-Allow-Origin': '*'}
 

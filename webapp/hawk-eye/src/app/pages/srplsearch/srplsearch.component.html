@@ -3,6 +3,13 @@
   {{title}}
 </h1>
 <input type="file" (change)="fileChange($event)" placeholder="Look up" accept=".jpg,.png,.jpeg">
+<br>
+<label>Results:</label>
+<br>
+<div id="photos-empty" *ngIf="photos.length == 0">
+	<label>No results</label>
+</div>
 <div id="photos" *ngFor="let photo of photos">
-   <img src={{photo}} class="img-thumbnail" width="20%"/>
+   <img src={{photo.imagedata}} class="img-thumbnail" width="20%"/>
+   <label>{{photo[2]}}</label>
 </div>

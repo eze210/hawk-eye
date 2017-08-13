@@ -11,7 +11,7 @@ const URL = 'http://172.17.0.2:5200/search/srpl';
 })
 export class SrplsearchComponent implements OnInit {
 	
-  title = 'Search in SRPL';
+  title = 'Search in SRPL by Image';
   data
   photos = [];
   constructor(private http: Http) {
@@ -34,7 +34,7 @@ export class SrplsearchComponent implements OnInit {
             .subscribe(photos => {
               	this.photos = photos["matches"];
 						    for (let photo of this.photos) {
-						        photo = 'data:image/png;base64,' + photo;
+						        photo.imagedata = 'data:image/png;base64,' + photo[1];
 						    };
             });
     }
