@@ -4,4 +4,6 @@
 </h1>
 <label>Nombre:</label>
 <input type="text"  [(ngModel)]="data.name" [ngModelOptions]="{standalone: true}"/>
+<input type="radio" value="0" name="type" [(ngModel)]="data.myType"> SRPL
+<input type="radio" value="1" name="type" [(ngModel)]="data.myType"> SRE
 <input type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".jpg,.png,.jpeg">

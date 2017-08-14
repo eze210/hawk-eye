@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
-const URL = 'http://172.17.0.2:5200/faces/srpl';
+import { RadioControlValueAccessor } from '@angular/forms';
+const URL = 'http://172.17.0.2:5200/faces';
 
 @Component({
   selector: 'app-srpl',
@@ -10,11 +11,12 @@ const URL = 'http://172.17.0.2:5200/faces/srpl';
   styleUrls: ['./srpl.component.scss']
 })
 export class SrplComponent implements OnInit {
-  title = 'Upload to SRPL';
+  title = 'Upload Image';
   data
   constructor(private http: Http) {
     this.data = {
-      name: ''
+      name: '',
+      myType: '0'
     };
   }
 
@@ -25,6 +27,7 @@ export class SrplComponent implements OnInit {
         let formData:FormData = new FormData();
         formData.append('uploadFile', file, file.name);
         formData.append('name', this.data["name"]);
+        formData.append('typeId', this.data["myType"]);
         let headers = new Headers();
         this.http.post(URL, formData)
             .map(res => res.json())
@@ -39,4 +42,8 @@ export class SrplComponent implements OnInit {
   ngOnInit() {
   }
 
+}
+
+export class RadioButtonComp {
+  myType = '0';
 }

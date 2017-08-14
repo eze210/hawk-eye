@@ -4,11 +4,11 @@ import { ServerService } from '../../shared/server.service'
 declare var google: any;
 
 @Component({
-  selector: 'app-srplget',
-  templateUrl: './srplget.component.html',
-  styleUrls: ['./srplget.component.scss']
+  selector: 'app-srpe',
+  templateUrl: './sre.component.html',
+  styleUrls: ['./sre.component.scss']
 })
-export class SrplgetComponent implements OnInit {
+export class SreComponent implements OnInit {
 
   constructor(private ServerService : ServerService) { }
   photos = [];
@@ -17,7 +17,7 @@ export class SrplgetComponent implements OnInit {
   map;
   marker = [];
   ngOnInit() {
-  	this.ServerService.getSRPL(0)
+  	this.ServerService.getSRPL(1)
 		.subscribe(photos => {
 		    this.photos = photos["data"];
 		    for (let photo of this.photos) {

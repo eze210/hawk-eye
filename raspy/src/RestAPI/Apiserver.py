@@ -20,6 +20,7 @@ api = Api(app)
 parserUpload = reqparse.RequestParser()
 parserUpload.add_argument('uploadFile', type=werkzeug.datastructures.FileStorage, location='files')
 parserUpload.add_argument('name')
+parserUpload.add_argument('typeId')
 
 class LocationHistorySRPL(Resource):
     def get(self, face_id):
@@ -29,16 +30,20 @@ class LocationHistorySRPL(Resource):
         result = dbw.getLocationsOf(face_id)
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
         
-class FaceBankSRPL(Resource):
+class FaceBankPost(Resource):
     def options(self):
         return {'Allow' : 'POST' }, 200, \
                { 'Access-Control-Allow-Origin': '*', \
                 'Access-Control-Allow-Methods' : 'PUT,GET' }
     def post(self):
         args = parserUpload.parse_args()
-        path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
-        args['uploadFile'].save(path);
         name = args['name']
+        typeId = args['typeId']
+        if typeId == 0:
+            path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
+        else:
+            path = os.getcwd() + "/SRE/" + args['uploadFile'].filename
+        args['uploadFile'].save(path);
         faced = faceDetector.FaceDetector()
         cv2 = cv2wrapper.CV2Wrapper()
         with open(path, "rb") as image_file:
@@ -52,14 +57,17 @@ class FaceBankSRPL(Resource):
             filename = 'SRPL/%s_%d.jpg' % (args['uploadFile'].filename, number)
             with open(filename, 'wb') as f:
                 f.write(found)
-            lastId = dbw.insertNewFaceImage(name, os.getcwd() + '/' + filename, 0)
+            lastId = dbw.insertNewFaceImage(name, os.getcwd() + '/' + filename, typeId)
             ids.append(lastId)
             number = number + 1
         os.remove(path)
         return {'ids': ids}, 201, {'Access-Control-Allow-Origin': '*'}
-    
-    def get(self):
-        result = dbw.getFaces(0)
+
+class FaceBank(Resource):
+    def get(self, type_id):
+        # if type_id > 1 or type_id < 0:
+        #     return { 'error': "Invalid input"}, 400, {'Access-Control-Allow-Origin': '*'}
+        result = dbw.getFaces(type_id)
         i = 0
         for var in result:
             with open(var[1], "rb") as image_file:
@@ -100,7 +108,8 @@ class SearchFaceBankSRPL(Resource):
 
         return {'matches': matches}, 201, {'Access-Control-Allow-Origin': '*'}
 
-api.add_resource(FaceBankSRPL, '/faces/srpl')
+api.add_resource(FaceBank, '/faces/<type_id>')
+api.add_resource(FaceBankPost, '/faces')
 api.add_resource(SearchFaceBankSRPL, '/search/srpl')
 api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 

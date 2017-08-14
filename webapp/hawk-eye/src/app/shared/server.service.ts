@@ -11,8 +11,8 @@ export class ServerService {
     private http: Http
   ) {}
 
-  getSRPL() {
-    return this.http.get(this.url + '/faces/srpl')
+  getSRPL(typeId) {
+    return this.http.get(this.url + '/faces/' + typeId)
     .map((res:Response) => res.json());
   }
 

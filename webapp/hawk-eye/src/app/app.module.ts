@@ -14,6 +14,7 @@ import { SrplgetComponent } from './pages/srplget/srplget.component';
 import { ServerService} from './shared/server.service'
 import { HttpModule } from '@angular/http';
 import { SrplsearchComponent } from './pages/srplsearch/srplsearch.component';
+import { SreComponent } from './pages/sre/sre.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { SrplsearchComponent } from './pages/srplsearch/srplsearch.component';
     SrplComponent,
     FileSelectDirective,
     SrplgetComponent,
-    SrplsearchComponent
+    SrplsearchComponent,
+    SreComponent
   ],
   imports: [
     BrowserModule,

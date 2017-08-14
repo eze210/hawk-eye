@@ -17,7 +17,6 @@ class DBWrapper(object):
 											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 											name TEXT,
 											imagePath TEXT,
-											siftPath TEXT,
 											type INTEGER
 											)''')
 
