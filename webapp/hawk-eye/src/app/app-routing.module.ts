@@ -12,7 +12,7 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'srpl',
+    path: 'upload',
     component: SrplComponent
   },
   {
@@ -24,7 +24,7 @@ const routes: Routes = [
     component: SreComponent
   },
   {
-    path: 'srplsearch',
+    path: 'search',
     component: SrplsearchComponent
   }
 ];

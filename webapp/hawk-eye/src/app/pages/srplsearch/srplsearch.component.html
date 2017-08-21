@@ -3,6 +3,8 @@
   {{title}}
 </h1>
 <input type="file" (change)="fileChange($event)" placeholder="Look up" accept=".jpg,.png,.jpeg">
+<input type="radio" value="0" name="type" [(ngModel)]="data.myType"> SRPL
+<input type="radio" value="1" name="type" [(ngModel)]="data.myType"> SRE
 <br>
 <label>Results:</label>
 <br>

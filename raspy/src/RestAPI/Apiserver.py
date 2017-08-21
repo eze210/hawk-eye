@@ -86,14 +86,15 @@ class SearchFaceBankSRPL(Resource):
     def post(self):
         args = parserUpload.parse_args()
         path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
-        file = args['uploadFile'];
+        file = args['uploadFile']
+        typeId = args['typeId']
         faced = faceDetector.FaceDetector()
         faceComp = faceComparator.FaceComparator()
         cv2 = cv2wrapper.CV2Wrapper()
         faces = []
         faces = faces + [cv2.imageToBinary(face) for face in faced.detectFromBinary(file.read())]
         print "Detected %d faces" % len(faces)
-        result = dbw.getFacesPaths()
+        result = dbw.getFaces(typeId)
         matches = []
         for file in result:
             for found in faces:
@@ -110,7 +111,7 @@ class SearchFaceBankSRPL(Resource):
 
 api.add_resource(FaceBank, '/faces/<type_id>')
 api.add_resource(FaceBankPost, '/faces')
-api.add_resource(SearchFaceBankSRPL, '/search/srpl')
+api.add_resource(SearchFaceBankSRPL, '/search')
 api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 
 

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
-const URL = 'http://172.17.0.2:5200/search/srpl';
+import { RadioControlValueAccessor } from '@angular/forms';
+const URL = 'http://172.17.0.2:5200/search';
 
 @Component({
   selector: 'app-srplsearch',
@@ -11,13 +12,13 @@ const URL = 'http://172.17.0.2:5200/search/srpl';
 })
 export class SrplsearchComponent implements OnInit {
 	
-  title = 'Search in SRPL by Image';
+  title = 'Search by Image';
   data
   photos = [];
   constructor(private http: Http) {
-    //this.data = {
-    //  name: ''
-    //};
+    this.data = {
+      myType: '0'
+    };
   }
 
 
@@ -27,6 +28,7 @@ export class SrplsearchComponent implements OnInit {
         let file: File = fileList[0];
         let formData:FormData = new FormData();
         formData.append('uploadFile', file, file.name);
+        formData.append('typeId', this.data["myType"]);
         let headers = new Headers();
         this.http.post(URL, formData)
             .map(res => res.json())
