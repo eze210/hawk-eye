@@ -16,7 +16,7 @@ const routes: Routes = [
     component: SrplComponent
   },
   {
-    path: 'srplget',
+    path: 'srpl',
     component: SrplgetComponent
   },
   {
