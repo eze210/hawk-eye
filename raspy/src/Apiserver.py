@@ -1,21 +1,16 @@
-import Database.DBWrapper as db
-import werkzeug
-import os
+import werkzeug, os, sys, base64
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from sqlalchemy import create_engine
 from json import dumps
 from flask_jsonpify import jsonify
-import sys
-import imp
-#db = imp.load_source('DBWrapper', './src/Database/DBWrapper.py')
-dbw = db.DBWrapper()
-import base64
-cv2wrapper = imp.load_source('CV2Wrapper', './src/ComputerVision/CV2Wrapper.py')
-faceDetector = imp.load_source('FaceDetector', './src/ComputerVision/FaceDetector.py')
-faceComparator = imp.load_source('FaceComparator', './src/ComputerVision/FaceComparator.py')
 
-# db_connect = create_engine('sqlite:///tmp/TrackingCollection.db')
+import Database.DBWrapper as db
+import ComputerVision.CV2Wrapper as cv2wrapper
+import ComputerVision.FaceDetector as faceDetector
+import ComputerVision.FaceComparator as faceComparator
+
+dbw = db.DBWrapper()
 app = Flask(__name__)
 api = Api(app)
 

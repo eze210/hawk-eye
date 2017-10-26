@@ -1,4 +1,4 @@
-import CV2Wrapper
+import ComputerVision.CV2Wrapper
 
 
 class FaceComparator(object):
