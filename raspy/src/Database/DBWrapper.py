@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3 as dbModule
 import time
 
 class DBWrapper(object):
@@ -6,7 +6,7 @@ class DBWrapper(object):
 	def __init__(self,
 				 dbPath = '/tmp/TrackingCollection.db'):
 
-		self.conn = sqlite3.connect(dbPath)
+		self.conn = dbModule.connect(dbPath)
 		self.typeSRPL = 0
 		self.typeSRE = 1
 

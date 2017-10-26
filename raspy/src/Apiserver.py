@@ -1,3 +1,4 @@
+import Database.DBWrapper as db
 import werkzeug
 import os
 from flask import Flask, request
@@ -5,13 +6,14 @@ from flask_restful import Resource, Api, reqparse
 from sqlalchemy import create_engine
 from json import dumps
 from flask_jsonpify import jsonify
+import sys
 import imp
-db = imp.load_source('DBWrapper', '../Database/DBWrapper.py')
+#db = imp.load_source('DBWrapper', './src/Database/DBWrapper.py')
 dbw = db.DBWrapper()
 import base64
-cv2wrapper = imp.load_source('CV2Wrapper', '../ComputerVision/CV2Wrapper.py')
-faceDetector = imp.load_source('FaceDetector', '../ComputerVision/FaceDetector.py')
-faceComparator = imp.load_source('FaceComparator', '../ComputerVision/FaceComparator.py')
+cv2wrapper = imp.load_source('CV2Wrapper', './src/ComputerVision/CV2Wrapper.py')
+faceDetector = imp.load_source('FaceDetector', './src/ComputerVision/FaceDetector.py')
+faceComparator = imp.load_source('FaceComparator', './src/ComputerVision/FaceComparator.py')
 
 # db_connect = create_engine('sqlite:///tmp/TrackingCollection.db')
 app = Flask(__name__)
@@ -24,9 +26,6 @@ parserUpload.add_argument('typeId')
 
 class LocationHistorySRPL(Resource):
     def get(self, face_id):
-        # conn = db_connect.connect()
-        # query = conn.execute("select * FROM locationHistory WHERE face_id = %d " %int(face_id))
-        # result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
         result = dbw.getLocationsOf(face_id)
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
         
@@ -65,8 +64,6 @@ class FaceBankPost(Resource):
 
 class FaceBank(Resource):
     def get(self, type_id):
-        # if type_id > 1 or type_id < 0:
-        #     return { 'error': "Invalid input"}, 400, {'Access-Control-Allow-Origin': '*'}
         result = dbw.getFaces(type_id)
         i = 0
         for var in result:
@@ -116,4 +113,9 @@ api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 
 
 if __name__ == '__main__':
-     app.run(host= '172.17.0.2', port='5200')
+    if len(sys.argv) == 1:
+        app.run(host= '172.17.0.2', port='5200')
+    elif len(sys.argv) == 3:
+        app.run(host= sys.argv[1], port=sys.argv[2])
+    else:
+        raise RuntimeError("Invalid parameters")
