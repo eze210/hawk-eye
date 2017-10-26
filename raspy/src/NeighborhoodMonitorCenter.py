@@ -3,13 +3,6 @@ from FaceCropTCPHandler import FaceCropTCPHandler
 import socket
 
 
-def _read_ip_from_temp():
-	with open('../raspy/ip.city.temp', 'r') as f:
-		ip = f.readline()
-		port = int(f.readline())
-		return ip, port
-
-
 class NeighborhoodMonitorCenter(ThreadedTCPServer):
 	"""NeighborhoodMonitorCenter (Centro de Monitoreo Barrial)"""
 
