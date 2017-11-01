@@ -1,4 +1,4 @@
-import sqlite3 as dbModule
+import psycopg2 as dbModule
 import time
 
 class DBWrapper(object):
@@ -6,24 +6,27 @@ class DBWrapper(object):
 	def __init__(self,
 				 dbPath = '/tmp/TrackingCollection.db'):
 
-		self.conn = dbModule.connect(dbPath)
+		#self.conn = dbModule.connect(dbPath)
+		self.conn = dbModule.connect(database='tracking', user='maxroach', host='localhost', port=26257)
+		self.conn.set_session(autocommit=True)
 		self.typeSRPL = 0
 		self.typeSRE = 1
 
 	def createBaseTables(self):
 		cursor = self.conn.cursor()
 		cursor.execute('''CREATE TABLE IF NOT EXISTS faceBank
-											(id INTEGER PRIMARY KEY AUTOINCREMENT,
-											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+											(id SERIAL PRIMARY KEY,
+											created_at TIMESTAMPTZ,
 											name TEXT,
 											imagePath TEXT,
 											type INTEGER
 											)''')
 
+
 		cursor.execute('''CREATE TABLE IF NOT EXISTS locationHistory
-											(id INTEGER PRIMARY KEY AUTOINCREMENT,
-											face_id INTEGER
-											created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+											(id SERIAL PRIMARY KEY,
+											face_id INTEGER,
+											created_at TIMESTAMPTZ,
 											latitude DECIMAL(9,6),
 											longitude DECIMAL(9,6),
 											FOREIGN KEY (face_id) REFERENCES faceBank(id)
@@ -53,7 +56,7 @@ class DBWrapper(object):
 		cursor = self.conn.cursor()
 		self.conn.text_factory = str
 		query = cursor.execute("SELECT latitude, longitude FROM locationHistory WHERE face_id = %s;" % face_id)
-		return query.fetchall()				
+		return query.fetchall()
 
 	def insertNewFaceImage(self, name, imagePath, typeUp):
 		cursor = self.conn.cursor()

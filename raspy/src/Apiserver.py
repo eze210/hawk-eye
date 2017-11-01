@@ -108,9 +108,7 @@ api.add_resource(LocationHistorySRPL, '/locations/srpl/<face_id>')
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        app.run(host= '172.17.0.2', port='5200')
-    elif len(sys.argv) == 3:
+    if len(sys.argv) == 3:
         app.run(host= sys.argv[1], port=sys.argv[2])
     else:
         raise RuntimeError("Invalid parameters")

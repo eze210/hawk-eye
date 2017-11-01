@@ -1,6 +1,57 @@
 # hawk-eye
 Distributed system to track objects or faces from images.
 
+### Requirements:
+
+  - Cockroach DB: 
+https://www.cockroachlabs.com
+
+  - Open CV:
+https://opencv.org/
+
+
+### To start cockroach node:
+
+  - In the first node:
+
+  ```bash
+    > cockroach start --insecure --host=<first-node-ip>
+  ```
+
+  - In other nodes (the join node ip must be some node already running):
+
+  ```bash
+    > cockroach start --insecure --host=<this-node-ip> --join=<first-node-ip>:26257
+  ```
+
+
+### To run the API Server:
+
+  ```bash
+    > cd raspy && python ./src/Apiserver.py <local-ip> <port>
+  ```
+
+### To run the City Monitor Center (CMC):
+
+  - Also exposes an API server in api-port
+
+  ```bash
+    > cd raspy && python ./src/cmc.py <local-ip> <port> <api-port>
+  ```
+
+### To run the Neighborhood Monitor Center (CMB):
+
+  - Also exposes an API server in api-port
+
+  ```bash
+    > cd raspy && python ./src/cmb.py <local-ip> <port> <api-port> <cmc-ip> <cmc-port>
+  ```
+
+### To run the Web Server:
+
+  ```bash
+    > cd webapp/hawk-eye && npm start
+  ```
 
 ### Before build the fedora env:
 
@@ -21,7 +72,6 @@ Distributed system to track objects or faces from images.
   ```bash
     > apt-get install docker.io
   ```
-
 
 ### To build the fedora env:
 

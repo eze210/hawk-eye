@@ -7,6 +7,9 @@ class NeighborhoodMonitorCenter(ThreadedTCPServer):
 	"""NeighborhoodMonitorCenter (Centro de Monitoreo Barrial)"""
 
 	def __init__(self, *args, **kwargs):
+		print " * Neighborhood Monitor Center running on %s:%s" % (args[0][0])
+		print " * * * CMB %s:%s --> CMC %s:%s" % ((args[0][0]) + (args[0][1]))
+
 		HOST, PORT = args[0][1][0], args[0][1][1]
 		args = args[0] + (FaceCropTCPHandler,)
 		ThreadedTCPServer.__init__(self, *args, **kwargs)
