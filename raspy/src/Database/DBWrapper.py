@@ -36,7 +36,7 @@ class DBWrapper(object):
 
 	def getFaces(self, typeId):
 		cursor = self.conn.cursor()
-		self.conn.text_factory = str
+		# self.conn.text_factory = str
 		query = cursor.execute("select id, imagePath, name from faceBank WHERE type = " + str(typeId) +";")
 		return query.fetchall()
 
@@ -74,5 +74,5 @@ class DBWrapper(object):
 		self.conn.close()
 
 
-db = DBWrapper()
-db.createBaseTables()
+# db = DBWrapper()
+# db.createBaseTables()

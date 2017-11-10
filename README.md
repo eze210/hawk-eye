@@ -24,6 +24,15 @@ https://opencv.org/
     > cockroach start --insecure --host=<this-node-ip> --join=<first-node-ip>:26257
   ```
 
+  - Create databases
+
+  ```bash
+    > cockroach sql --insecure
+    root@:26257/> CREATE DATABASE tracking;
+    root@:26257/> CREATE TABLE tracking.faceBank  (id SERIAL PRIMARY KEY, created_at TIMESTAMPTZ, name TEXT, imagePath TEXT, type INTEGER);
+    root@:26257/> CREATE TABLE  tracking.locationHistory (id SERIAL PRIMARY KEY, face_id INTEGER, created_at TIMESTAMPTZ, latitude DECIMAL(9,6), longitude DECIMAL(9,6), FOREIGN KEY (face_id) REFERENCES faceBank(id));
+    root@:26257/> GRANT SELECT, INSERT, UPDATE ON tracking.faceBank TO maxroach;
+    root@:26257/> GRANT SELECT, INSERT, UPDATE ON tracking.locationhistory TO maxroach;
 
 ### To run the API Server:
 

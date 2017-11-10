@@ -3,7 +3,7 @@ import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
 import { RadioControlValueAccessor } from '@angular/forms';
-const URL = 'http://172.17.0.2:5200/search';
+const URL = 'http://192.168.1.112:5200/search';
 
 @Component({
   selector: 'app-srplsearch',
