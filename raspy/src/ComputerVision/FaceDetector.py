@@ -1,4 +1,4 @@
-import ComputerVision.CV2Wrapper
+import CV2Wrapper
 
 
 class FaceDetector(object):

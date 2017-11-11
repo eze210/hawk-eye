@@ -34,9 +34,9 @@ class FaceBankPost(Resource):
         name = args['name']
         typeId = args['typeId']
         if typeId == 0:
-            path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
+            path = os.getcwd() + "/RestAPI/SRPL/" + args['uploadFile'].filename
         else:
-            path = os.getcwd() + "/SRE/" + args['uploadFile'].filename
+            path = os.getcwd() + "/RestAPI/SRE/" + args['uploadFile'].filename
         args['uploadFile'].save(path);
         faced = faceDetector.FaceDetector()
         cv2 = cv2wrapper.CV2Wrapper()
@@ -48,7 +48,7 @@ class FaceBankPost(Resource):
         ids = []
         number = 1
         for found in faces:
-            filename = 'SRPL/%s_%d.jpg' % (args['uploadFile'].filename, number)
+            filename = 'RestAPI/SRPL/%s_%d.jpg' % (args['uploadFile'].filename, number)
             with open(filename, 'wb') as f:
                 f.write(found)
             lastId = dbw.insertNewFaceImage(name, os.getcwd() + '/' + filename, typeId)

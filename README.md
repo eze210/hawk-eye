@@ -38,7 +38,7 @@ https://opencv.org/
 ### To run the API Server:
 
   ```bash
-    > cd raspy && python ./src/Apiserver.py <local-ip> <port>
+    > cd raspy/src && python ./Apiserver.py <local-ip> <port>
   ```
 
 ### To run the City Monitor Center (CMC):

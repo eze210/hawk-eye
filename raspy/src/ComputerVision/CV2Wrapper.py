@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import os, sys
 
 class CV2Wrapper(object):
 	"""OpenCV 2 Wrapper"""
@@ -21,7 +22,6 @@ class CV2Wrapper(object):
 		self.scaleFactor = scaleFactor
 		self.minNeighbors = minNeighbors
 		self.templateMatchingLimit = templateMatchingLimit
-
 		cascades = [
 			#'static/haarcascade_eye.xml',
 			#'static/haarcascade_eye_tree_eyeglasses.xml',
@@ -36,7 +36,7 @@ class CV2Wrapper(object):
 			# '/raspy/static/lbpcascade_frontalface.xml',
 			# '/raspy/static/haarcascade_frontalface_alt.xml',
 			# '/raspy/static/haarcascade_frontalface_alt2.xml',
-			'/raspy/static/haarcascade_frontalface_alt_tree.xml',
+			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
 			# '/raspy/static/haarcascade_frontalface_default.xml'
 		]
 
