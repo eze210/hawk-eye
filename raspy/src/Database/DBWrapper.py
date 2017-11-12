@@ -36,13 +36,11 @@ class DBWrapper(object):
 
 	def getFaces(self, typeId):
 		cursor = self.conn.cursor()
-		# self.conn.text_factory = str
 		cursor.execute("select id, imagePath, name from faceBank WHERE type = " + str(typeId) +";")
 		return cursor.fetchall()
 
 	def getFacesPaths(self):
 		cursor = self.conn.cursor()
-		self.conn.text_factory = str
 		cursor.execute("select id, imagePath, name from faceBank;")
 		return cursor.fetchall()
 
@@ -54,7 +52,6 @@ class DBWrapper(object):
 
 	def getLocationsOf(self, face_id):
 		cursor = self.conn.cursor()
-		self.conn.text_factory = str
 		cursor.execute("SELECT latitude, longitude FROM locationHistory WHERE face_id = %s;" % face_id)
 		return cursor.fetchall()
 
