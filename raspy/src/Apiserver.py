@@ -9,6 +9,7 @@ import Database.DBWrapper as db
 import ComputerVision.CV2Wrapper as cv2wrapper
 import ComputerVision.FaceDetector as faceDetector
 import ComputerVision.FaceComparator as faceComparator
+import datetime
 
 dbw = db.DBWrapper()
 app = Flask(__name__)
@@ -22,6 +23,7 @@ parserUpload.add_argument('typeId')
 class LocationHistorySRPL(Resource):
     def get(self, face_id):
         result = dbw.getLocationsOf(face_id)
+        result = list(map(lambda x: (float(x[0]), float(x[1]), x[2].strftime("%Y-%m-%d %H:%M:%S")), result))
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}
         
 class FaceBankPost(Resource):
@@ -64,7 +66,7 @@ class FaceBank(Resource):
         for var in result:
             with open(var[1], "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
-            new = (var[0], encoded_string, var[2])
+            new = (str(var[0]), encoded_string, var[2])
             result[i] = new
             i += 1
         return { 'data': result}, 200, {'Access-Control-Allow-Origin': '*'}

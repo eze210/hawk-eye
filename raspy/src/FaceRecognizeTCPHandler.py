@@ -41,7 +41,7 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                     # receives the image
                     self._readAll(length)
 
-                    # for root, dirs, files in os.walk("./templates"):
+                    # for root, dirs, files in os.walk("./templates"):                    
                     for file in result:
                         # for fileName in files:
                             # templateImage = openCV.imageRead("%s/%s" % (root, fileName))
@@ -55,7 +55,7 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                                 #     f.write(self.data)
                                 # print "Image %d was saved" % x
                                 lat, longi = cordinates.split(",")
-                                db.insertLocationTrace(file[0], lat, longi)
+                                db.insertLocationTrace(file[0], lat, longi, timestamp)
                                 print "MATCH"
                             else:
                                 print "NO MATCH"

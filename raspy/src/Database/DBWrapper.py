@@ -1,4 +1,5 @@
 import psycopg2 as dbModule
+import datetime
 import time
 
 class DBWrapper(object):
@@ -44,20 +45,22 @@ class DBWrapper(object):
 		cursor.execute("select id, imagePath, name from faceBank;")
 		return cursor.fetchall()
 
-	def insertLocationTrace(self, face_id, latitude, longitude):
+	def insertLocationTrace(self, face_id, latitude, longitude, timestamp):
 		cursor = self.conn.cursor()
-		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ")")
+		cursor.execute("INSERT INTO locationHistory (face_id, latitude, longitude, created_at) VALUES (" + str(face_id) + ", " + str(latitude) + ", " + str(longitude) + ", '" + str(timestamp) + "')")
 		self.conn.commit()
 		return cursor.lastrowid
 
 	def getLocationsOf(self, face_id):
 		cursor = self.conn.cursor()
-		cursor.execute("SELECT latitude, longitude FROM locationHistory WHERE face_id = %s;" % face_id)
+		cursor.execute("SELECT latitude, longitude, created_at FROM locationHistory WHERE face_id = %s;" % face_id)
 		return cursor.fetchall()
 
 	def insertNewFaceImage(self, name, imagePath, typeUp):
 		cursor = self.conn.cursor()
-		cursor.execute("INSERT INTO faceBank (name, imagePath, type) VALUES ('" + name + "', '" + imagePath + "', '" + str(typeUp) + "')")
+		ts = time.time()
+		now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+		cursor.execute("INSERT INTO faceBank (name, imagePath, type, created_at) VALUES ('" + name + "', '" + imagePath + "', '" + str(typeUp) + "', '" + str(now) + "')")
 		self.conn.commit()
 		return cursor.lastrowid
 
