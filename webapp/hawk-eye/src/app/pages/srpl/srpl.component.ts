@@ -3,7 +3,7 @@ import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
 import { RadioControlValueAccessor } from '@angular/forms';
-const URL = 'http://192.168.1.112:5200/faces';
+import * as data from '../../config/config.json';
 
 @Component({
   selector: 'app-srpl',
@@ -11,6 +11,7 @@ const URL = 'http://192.168.1.112:5200/faces';
   styleUrls: ['./srpl.component.scss']
 })
 export class SrplComponent implements OnInit {
+  public URL;
   title = 'Upload Image';
   data
   constructor(private http: Http) {
@@ -18,6 +19,7 @@ export class SrplComponent implements OnInit {
       name: '',
       myType: '0'
     };
+    this.URL = 'http://' + (<any>data).api_ip + ':' + (<any>data).api_port;
   }
 
   fileChange(event) {
@@ -29,7 +31,7 @@ export class SrplComponent implements OnInit {
         formData.append('name', this.data["name"]);
         formData.append('typeId', this.data["myType"]);
         let headers = new Headers();
-        this.http.post(URL, formData)
+        this.http.post(this.URL + '/faces', formData)
             .map(res => res.json())
             .catch(error => Observable.throw(error))
             .subscribe(
