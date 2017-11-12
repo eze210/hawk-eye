@@ -38,6 +38,7 @@ export class SreComponent implements OnInit {
         this.coordinates = locations["data"];
         var infowindow = new google.maps.InfoWindow();
         for(var i = 0; i < this.coordinates.length; i++) {
+          var date = this.coordinates[i][2];
           this.marker = new google.maps.Marker({
             position: new google.maps.LatLng(this.coordinates[i][0], this.coordinates[i][1]),
             map: this.map
@@ -45,7 +46,7 @@ export class SreComponent implements OnInit {
 
           google.maps.event.addListener(this.marker, 'click', (function(marker, i) {
             return function() {
-              infowindow.setContent(name);
+              infowindow.setContent(name + " - " + date);
               infowindow.open(this.map, marker);
             }
           })(this.marker, i));
