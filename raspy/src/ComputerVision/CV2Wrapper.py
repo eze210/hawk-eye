@@ -8,7 +8,7 @@ class CV2Wrapper(object):
 	def __init__(self, 
 				 maxWidth = 640.0, 
 				 maxHeight = 640.0,
-				 distanceFactor = 0.8,
+				 distanceFactor = 0.6,
 				 minGoodsPercentaje = 0.045,
 				 minSize = (30,30),
 				 scaleFactor = 1.00655,
@@ -33,11 +33,11 @@ class CV2Wrapper(object):
 			#'static/haarcascade_smile.xml',
 
 			# Face related
-			# '/raspy/static/lbpcascade_frontalface.xml',
+			# os.getcwd().replace("src", "static") + '/lbpcascade_frontalface.xml',
 			# '/raspy/static/haarcascade_frontalface_alt.xml',
 			# '/raspy/static/haarcascade_frontalface_alt2.xml',
-			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
-			# '/raspy/static/haarcascade_frontalface_default.xml'
+			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
+			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_default.xml'
 		]
 
 		# Loads trained XML data
@@ -147,7 +147,7 @@ class CV2Wrapper(object):
 
 
 	def imagesCompare(self, image1, image2):
-		return self.imagesCompareSIFT(image1, image2)
+		return self.imagesCompareTempleateMatching(image1, image2)
 
 
 	def imagesCompareTempleateMatching(self, image1, image2):

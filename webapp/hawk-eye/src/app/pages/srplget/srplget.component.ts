@@ -33,6 +33,15 @@ export class SrplgetComponent implements OnInit {
   }
 
   getLocations(id, name) {
+    //Loop through all the markers and remove
+    for (var i = 0; i < this.marker.length; i++) {
+        this.marker[i].setMap(null);
+    }
+    this.map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 7,
+      center: {lat: -34.7739036, lng: -58.320372}
+    });
+    this.marker = [];
     this.ServerService.getSRPLLocations(id)
     .subscribe(locations => {
         this.coordinates = locations["data"];
