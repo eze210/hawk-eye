@@ -27,17 +27,17 @@ class CV2Wrapper(object):
 			#'static/haarcascade_eye_tree_eyeglasses.xml',
 			#'static/haarcascade_lefteye_2splits.xml',
 			#'static/haarcascade_licence_plate_rus_16stages.xml',
-			#'static/haarcascade_profileface.xml',
+			# os.getcwd().replace("src", "static") + '/haarcascade_profileface.xml',
 			#'static/haarcascade_righteye_2splits.xml',
 			#'static/haarcascade_russian_plate_number.xml',
 			#'static/haarcascade_smile.xml',
 
 			# Face related
 			# os.getcwd().replace("src", "static") + '/lbpcascade_frontalface.xml',
-			# '/raspy/static/haarcascade_frontalface_alt.xml',
-			# '/raspy/static/haarcascade_frontalface_alt2.xml',
+			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt.xml',
+			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt2.xml',
 			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
-			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_default.xml'
+			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_default.xml'
 		]
 
 		# Loads trained XML data
