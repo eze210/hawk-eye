@@ -9,7 +9,7 @@ class CV2Wrapper(object):
 				 maxWidth = 640.0, 
 				 maxHeight = 640.0,
 				 distanceFactor = 0.6,
-				 minGoodsPercentaje = 0.045,
+				 minGoodsPercentaje = 0.069,
 				 minSize = (30,30),
 				 scaleFactor = 1.00655,
 				 minNeighbors = 10,
@@ -131,10 +131,10 @@ class CV2Wrapper(object):
 			if m.distance < self.distanceFactor * n.distance:
 				good += 1
 		
-		print good
 		print "%d/%d" % (good, allMatches)
 		if allMatches == 0:
 			return False
+		print good/allMatches
 		return ((good / allMatches) > self.minGoodsPercentaje)	
 
 
@@ -147,7 +147,8 @@ class CV2Wrapper(object):
 
 
 	def imagesCompare(self, image1, image2):
-		return self.imagesCompareTempleateMatching(image1, image2)
+		return self.imagesCompareSIFT(image1, image2)
+		# return self.imagesCompareTempleateMatching(image1, image2)
 
 
 	def imagesCompareTempleateMatching(self, image1, image2):
