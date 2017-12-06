@@ -10,9 +10,9 @@ class CV2Wrapper(object):
 				 maxHeight = 640.0,
 				 distanceFactor = 0.6,
 				 minGoodsPercentaje = 0.069,
-				 minSize = (30,30),
-				 scaleFactor = 1.00655,
-				 minNeighbors = 10,
+				 minSize = (100, 100),
+				 scaleFactor = 1.08,
+				 minNeighbors = 1,
 				 templateMatchingLimit = 0.4):
 		self.maxWidth = maxWidth
 		self.maxHeight = maxHeight
@@ -27,17 +27,17 @@ class CV2Wrapper(object):
 			#'static/haarcascade_eye_tree_eyeglasses.xml',
 			#'static/haarcascade_lefteye_2splits.xml',
 			#'static/haarcascade_licence_plate_rus_16stages.xml',
-			# os.getcwd().replace("src", "static") + '/haarcascade_profileface.xml',
+			#os.getcwd().replace("src", "static") + '/haarcascade_profileface.xml',
 			#'static/haarcascade_righteye_2splits.xml',
 			#'static/haarcascade_russian_plate_number.xml',
 			#'static/haarcascade_smile.xml',
 
 			# Face related
-			# os.getcwd().replace("src", "static") + '/lbpcascade_frontalface.xml',
-			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt.xml',
-			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt2.xml',
-			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
-			# os.getcwd().replace("src", "static") + '/haarcascade_frontalface_default.xml'
+			#os.getcwd().replace("src", "static") + '/lbpcascade_frontalface.xml',
+			#os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt.xml',
+			os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt2.xml',
+			#os.getcwd().replace("src", "static") + '/haarcascade_frontalface_alt_tree.xml',
+			#os.getcwd().replace("src", "static") + '/haarcascade_frontalface_default.xml'
 		]
 
 		# Loads trained XML data
@@ -51,6 +51,8 @@ class CV2Wrapper(object):
 		indexParams = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
 		searchParams = dict(checks = 50)
 		self.flann = cv2.FlannBasedMatcher(indexParams, searchParams)
+		self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+		self.bf = cv2.BFMatcher()
 
 
 	def imageRead(self, path):
@@ -77,8 +79,8 @@ class CV2Wrapper(object):
 		for cascade in self.faceCascades:
 			detected = cascade.detectMultiScale(
 				image = imageGray, 
-				scaleFactor = self.scaleFactor, 
 				minNeighbors = self.minNeighbors,
+				scaleFactor = self.scaleFactor,
 				flags = cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT | cv2.CASCADE_DO_ROUGH_SEARCH,
 				minSize = self.minSize)
 			
@@ -87,14 +89,27 @@ class CV2Wrapper(object):
 
 
 	def detectFaces(self, imageColor):
+		cv2.imwrite('input.jpg',imageColor)
+		height, width = imageColor.shape[:2]
+		minSide = height if height < width else width
+		imageColor = imageColor[height/2 - minSide/2:height/2 + minSide/2, width/2 - minSide/2:width/2 + minSide/2]
+		cv2.imwrite('cuadrada.jpg',imageColor)
+
 		imageScaled, scaleFactor = self._scaleToDefaultSize(imageColor)
+		cv2.imwrite('escalada.jpg',imageScaled)
 
 		imageGray = self.toGrayScale(imageScaled)
-		#imageNormalized = cv2.equalizeHist(imageGray)
+		cv2.imwrite('clahe_antes.jpg',imageGray)
+		imageGray = self.clahe.apply(imageGray)
+		cv2.imwrite('clahe_despues.jpg',imageGray)
+		imageGray = cv2.equalizeHist(imageGray)
+		cv2.imwrite('clahe_despues3.jpg',imageGray)
 		faces = []
 		rects = self.detectFacesLimits(imageGray)
 		#rects[:,2:] += rects[:,:2]
+		idx = 0
 		for (x,y,w,h) in rects:
+			idx += 1
 			up = int((1.0 * y) / scaleFactor)
 			down = int((1.0 * (y + h)) / scaleFactor)
 			left = int((1.0 * x) / scaleFactor)
@@ -103,6 +118,7 @@ class CV2Wrapper(object):
 			face = imageColor[up:down, left:right]
 			face, __dummy = self._scaleToDefaultSize(face)			
 			faces.append(face)
+			cv2.imwrite('face_%d.jpg' % idx, face)
 
 		return faces
 
@@ -140,8 +156,8 @@ class CV2Wrapper(object):
 
 	def imagesCompareSIFT(self, image1, image2):
 		# find the keypoints and descriptors with SIFT
-		des1 = self.toSIFTMatrix(image2)
-		des2 = self.toSIFTMatrix(image1)
+		des1 = self.toSIFTMatrix(image1)
+		des2 = self.toSIFTMatrix(image2)
 
 		return self.compareSIFTMatrix(des1, des2)
 
@@ -184,5 +200,5 @@ class CV2Wrapper(object):
 				None,
 				fx=scaleFactor,
 				fy=scaleFactor,
-				interpolation=cv2.INTER_CUBIC
+				interpolation=cv2.INTER_AREA
 			), scaleFactor

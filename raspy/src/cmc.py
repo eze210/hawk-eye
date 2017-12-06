@@ -22,7 +22,6 @@ if __name__ == "__main__":
     # more thread for each request
     serverThread = threading.Thread(target=faceRecognizerServer.serve_forever)
     # Exit the server thread when the main thread terminates
-    serverThread.daemon = True
     serverThread.start()
 
     # Create the WebAPI server, binding to host on specified port or 9991
@@ -30,5 +29,11 @@ if __name__ == "__main__":
     # interrupt the program with Ctrl-C
     Apiserver.app.run(host=HOST, port=PORT_WEB)
 
+    print "Api server is now down."
+
     faceRecognizerServer.shutdown()
+    print "Server is now down."
     faceRecognizerServer.server_close()
+    print "Server is closed."
+    serverThread.join()
+

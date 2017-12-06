@@ -35,11 +35,13 @@ class FaceBankPost(Resource):
         args = parserUpload.parse_args()
         name = args['name']
         typeId = args['typeId']
-        if typeId == 0:
+        print 'Type Identifier: ', typeId
+        if typeId == '0':
             path = os.getcwd() + "/RestAPI/SRPL/" + args['uploadFile'].filename
         else:
             path = os.getcwd() + "/RestAPI/SRE/" + args['uploadFile'].filename
-        args['uploadFile'].save(path);
+        print 'Saving path: %s\n' % path
+        args['uploadFile'].save(path)
         faced = faceDetector.FaceDetector()
         cv2 = cv2wrapper.CV2Wrapper()
         with open(path, "rb") as image_file:
