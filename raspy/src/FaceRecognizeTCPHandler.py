@@ -1,6 +1,7 @@
 import os
 import SocketServer
 from ComputerVision.FaceComparator import FaceComparator
+from ComputerVision.FaceRecognizer import FaceRecognizer
 from ComputerVision.CV2Wrapper import CV2Wrapper
 from Database.DBWrapper import DBWrapper
 
@@ -33,7 +34,22 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                 # receives the number of images to receive
                 numberOfImages = self._readLength()
                 db = DBWrapper()
+                recognizer = FaceRecognizer()
                 result = db.getFacesPaths()
+
+                facesInDB = [openCV.toGrayScale(openCV.imageRead(r[1])) for r in result]
+                namesInDB = [r[2] for r in result]
+                noRepeat = list(set(namesInDB))
+                labels = [noRepeat.index(name) for name in namesInDB]
+                recognizer.train(facesInDB, labels)
+
+                facesIDs = {}
+                for name in noRepeat:
+                    facesIDs[name] = []
+                
+                for item in result:
+                    facesIDs[item[2]].append(item[0])
+
                 for x in xrange(0, numberOfImages):
                     # receives the length of an image
                     length = self._readLength()
@@ -41,25 +57,19 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                     # receives the image
                     self._readAll(length)
 
-                    # for root, dirs, files in os.walk("./templates"):                    
-                    for file in result:
-                        # for fileName in files:
-                            # templateImage = openCV.imageRead("%s/%s" % (root, fileName))
-                            templateImage = openCV.imageRead(file[1])
-                            receivedImage = openCV.imageFromBinary(self.data)
-                            #if faceComparator.facesCompare(templateImage, receivedImage):
-                            if faceComparator.facesCompare(templateImage, receivedImage):
-                            # if True:
-                                # saves the images
-                                # with open('output/%s_%s.%d.jpg' % (cordinates, timestamp, x), 'wb') as f:
-                                #     f.write(self.data)
-                                # print "Image %d was saved" % x
-                                lat, longi = cordinates.split(",")
-                                db.insertLocationTrace(file[0], lat, longi, timestamp)
-                                print "MATCH"
-                            else:
-                                print "NO MATCH"
-
+                    receivedImage = openCV.imageFromBinary(self.data)
+                    
+                    (predictLabel, predictDistance) = recognizer.predict(receivedImage)
+                    predictName = noRepeat[predictLabel]
+                    print "Predict %s with distance %f" % (predictName, predictDistance)
+                    if predictDistance < 20:
+                        lat, longi = cordinates.split(",")
+                        for faceID in facesIDs[predictName]:
+                            db.insertLocationTrace(faceID, lat, longi, timestamp)
+                        print "MATCH"
+                    else:
+                        print "NO MATCH"
+                                
         except Exception as e:
             with open('output/exception.jpg', 'wb') as f:
                 f.write(self.data)

@@ -9,6 +9,7 @@ import Database.DBWrapper as db
 import ComputerVision.CV2Wrapper as cv2wrapper
 import ComputerVision.FaceDetector as faceDetector
 import ComputerVision.FaceComparator as faceComparator
+import ComputerVision.FaceRecognizer as faceRecognizer
 import datetime
 
 dbw = db.DBWrapper()
@@ -81,28 +82,40 @@ class SearchFaceBankSRPL(Resource):
                 'Access-Control-Allow-Methods' : 'PUT,GET' }
     def post(self):
         args = parserUpload.parse_args()
-        path = os.getcwd() + "/SRPL/" + args['uploadFile'].filename
-        file = args['uploadFile']
-        typeId = args['typeId']
+        uploadFile = args['uploadFile']
+        typeIdentifier = args['typeId']
         faced = faceDetector.FaceDetector()
         faceComp = faceComparator.FaceComparator()
-        cv2 = cv2wrapper.CV2Wrapper()
-        faces = []
-        faces = faces + [cv2.imageToBinary(face) for face in faced.detectFromBinary(file.read())]
-        print "Detected %d faces" % len(faces)
-        result = dbw.getFaces(typeId)
-        matches = []
-        for file in result:
-            for found in faces:
-                templateImage = cv2.imageRead(file[1])
-                receivedImage = cv2.imageFromBinary(found)
-                if faceComp.facesCompare(templateImage, receivedImage):
-                    print "Found a MATCH in search\n"
-                    with open(file[1], "rb") as image_file:
-                        encoded_string = base64.b64encode(image_file.read())
-                    new = (file[0], encoded_string, file[2])
-                    matches.append(new)
 
+        recognizer = faceRecognizer.FaceRecognizer()
+
+        cv2 = cv2wrapper.CV2Wrapper()
+        facesInQuery = [cv2.toGrayScale(face) for face in faced.detectFromBinary(uploadFile.read())]
+        print "Detected %d faces in query" % len(facesInQuery)
+        result = dbw.getFaces(typeIdentifier)
+
+        facesInDB = [cv2.toGrayScale(cv2.imageRead(r[1])) for r in result]
+        namesInDB = [r[2] for r in result]
+        noRepeat = list(set(namesInDB))
+        labels = [noRepeat.index(name) for name in namesInDB]
+        recognizer.train(facesInDB, labels)
+
+        predicted = []
+        for f in facesInQuery:
+            (predictLabel, predictDistance) = recognizer.predict(f)
+            predictName = noRepeat[predictLabel]
+            print "Predict %s with distance %f" % (predictName, predictDistance)
+            if predictDistance < 20:
+                predicted.append(predictName)
+
+        matches = []
+        for i in range(len(facesInDB)):
+            if namesInDB[i] in predicted:
+                print "Found a MATCH in search\n"
+                with open(result[i][1], "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+                new = (result[i][0], encoded_string, namesInDB[i])
+                matches.append(new)
         return {'matches': matches}, 201, {'Access-Control-Allow-Origin': '*'}
 
 api.add_resource(FaceBank, '/faces/<type_id>')

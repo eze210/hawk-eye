@@ -55,6 +55,10 @@ class CV2Wrapper(object):
 		self.bf = cv2.BFMatcher()
 
 
+	def createFaceRecognizer(self):
+		return cv2.face.createLBPHFaceRecognizer()
+
+
 	def imageRead(self, path):
 	  return cv2.imread(path)
 
@@ -89,21 +93,15 @@ class CV2Wrapper(object):
 
 
 	def detectFaces(self, imageColor):
-		cv2.imwrite('input.jpg',imageColor)
 		height, width = imageColor.shape[:2]
 		minSide = height if height < width else width
 		imageColor = imageColor[height/2 - minSide/2:height/2 + minSide/2, width/2 - minSide/2:width/2 + minSide/2]
-		cv2.imwrite('cuadrada.jpg',imageColor)
 
 		imageScaled, scaleFactor = self._scaleToDefaultSize(imageColor)
-		cv2.imwrite('escalada.jpg',imageScaled)
 
 		imageGray = self.toGrayScale(imageScaled)
-		cv2.imwrite('clahe_antes.jpg',imageGray)
 		imageGray = self.clahe.apply(imageGray)
-		cv2.imwrite('clahe_despues.jpg',imageGray)
 		imageGray = cv2.equalizeHist(imageGray)
-		cv2.imwrite('clahe_despues3.jpg',imageGray)
 		faces = []
 		rects = self.detectFacesLimits(imageGray)
 		#rects[:,2:] += rects[:,:2]
@@ -129,6 +127,10 @@ class CV2Wrapper(object):
 
 	def toSIFTMatrix(self, image):
 		# find the keypoints and descriptors with SIFT
+		image = self.toGrayScale(image)
+		image = self.clahe.apply(image)
+		image = cv2.equalizeHist(image)
+
 		__kp, des = self.sift.detectAndCompute(image, None)
 		return des
 
@@ -138,7 +140,7 @@ class CV2Wrapper(object):
 			return False
 		if matrix1.size == 0 or matrix2.size == 0:
 			return False
-		matches = self.flann.knnMatch(matrix1, matrix2, k=2)
+		matches = self.flann.knnMatch(matrix1, trainDescriptors = matrix2, k=2)
 
 		good = 0.0
 		allMatches = 0.0
@@ -151,7 +153,8 @@ class CV2Wrapper(object):
 		if allMatches == 0:
 			return False
 		print good/allMatches
-		return ((good / allMatches) > self.minGoodsPercentaje)	
+		#return ((good / allMatches) > self.minGoodsPercentaje)
+		return (good >= 5)
 
 
 	def imagesCompareSIFT(self, image1, image2):
@@ -174,7 +177,7 @@ class CV2Wrapper(object):
 			cv2.TM_CCOEFF_NORMED)
 		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 		return (max_val > self.templateMatchingLimit)
-		
+
 
 	def imagesCompareMaths(self, image1, image2):
 		im1Gray = self.toGrayScale(image1)
