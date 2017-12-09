@@ -59,12 +59,13 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
 
                     receivedImage = openCV.imageFromBinary(self.data)
                     
-                    (predictLabel, predictDistance) = recognizer.predict(receivedImage)
+                    (predictLabel, predictDistance) = recognizer.predict(openCV.toGrayScale(receivedImage))
                     predictName = noRepeat[predictLabel]
                     print "Predict %s with distance %f" % (predictName, predictDistance)
                     if predictDistance < 20:
                         lat, longi = cordinates.split(",")
                         for faceID in facesIDs[predictName]:
+                            print "Saving..."
                             db.insertLocationTrace(faceID, lat, longi, timestamp)
                         print "MATCH"
                     else:

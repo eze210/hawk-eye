@@ -1,4 +1,4 @@
-#usage: python camera.py img0.jpg img1.jpg img2.jpg ... imgN.jpg
+#usage: python camera.py host port img0.jpg img1.jpg img2.jpg ... imgN.jpg
 
 import socket
 import sys
@@ -9,19 +9,10 @@ def _get_timestamp():
     ts = time.time()
     return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-
-def _read_ip_from_temp():
-    f = open('../raspy/ip.temp', 'r')
-    ip = f.readline()
-    port = int(f.readline())
-    f.close()
-    return ip, port
-
-
-HOST, PORT = _read_ip_from_temp()
-latitude = sys.argv[1]
-longitude = sys.argv[2]
-IM_NAMES = sys.argv[3:]
+HOST, PORT = sys.argv[1], int(sys.argv[2])
+latitude = sys.argv[3]
+longitude = sys.argv[4]
+IM_NAMES = sys.argv[5:]
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
