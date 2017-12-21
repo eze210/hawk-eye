@@ -62,7 +62,7 @@ class FaceRecognizeTCPHandler(SocketServer.BaseRequestHandler):
                     (predictLabel, predictDistance) = recognizer.predict(openCV.toGrayScale(receivedImage))
                     predictName = noRepeat[predictLabel]
                     print "Predict %s with distance %f" % (predictName, predictDistance)
-                    if predictDistance < 20:
+                    if predictDistance < 34.5:
                         lat, longi = cordinates.split(",")
                         for faceID in facesIDs[predictName]:
                             print "Saving..."

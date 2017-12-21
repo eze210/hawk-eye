@@ -105,7 +105,7 @@ class SearchFaceBankSRPL(Resource):
             (predictLabel, predictDistance) = recognizer.predict(f)
             predictName = noRepeat[predictLabel]
             print "Predict %s with distance %f" % (predictName, predictDistance)
-            if predictDistance < 20:
+            if predictDistance < 34.5:
                 predicted.append(predictName)
 
         matches = []
